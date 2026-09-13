@@ -1,9 +1,31 @@
 "use client";
 
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 
-const applicants = [
+type Applicant = {
+  id: string;
+  fullName: string;
+  registrationNumber: string;
+  email: string;
+  personalEmail: string;
+  phone: string;
+  program: string;
+  branch: string;
+  semester: string;
+  cgpa: string;
+  preferredRole: string;
+  status: string;
+  linkedin: string;
+  github: string;
+  portfolio: string;
+  resume: string;
+  communities: string;
+  achievements: string;
+  whyJoin: string;
+};
+
+const applicants: Applicant[] = [
   {
     id: "APP001",
     fullName: "Rahul Sharma",
@@ -17,6 +39,15 @@ const applicants = [
     cgpa: "8.7",
     preferredRole: "Software Engineer",
     status: "Shortlisted",
+    linkedin: "https://linkedin.com",
+    github: "https://github.com",
+    portfolio: "https://example.com",
+    resume: "#",
+    communities: "AWS Club, Coding Club",
+    achievements:
+      "Participated in hackathons and technical events. Built multiple software projects.",
+    whyJoin:
+      "I want to gain practical industry experience and contribute to real-world projects while improving my technical skills.",
   },
   {
     id: "APP002",
@@ -31,6 +62,15 @@ const applicants = [
     cgpa: "9.1",
     preferredRole: "Data Analyst",
     status: "Selected",
+    linkedin: "https://linkedin.com",
+    github: "https://github.com",
+    portfolio: "https://example.com",
+    resume: "#",
+    communities: "Data Science Club",
+    achievements:
+      "Completed data analytics projects and participated in technical competitions.",
+    whyJoin:
+      "I am interested in solving real-world problems using data and gaining industry exposure.",
   },
   {
     id: "APP003",
@@ -45,6 +85,15 @@ const applicants = [
     cgpa: "8.2",
     preferredRole: "Web Developer",
     status: "Pending",
+    linkedin: "https://linkedin.com",
+    github: "https://github.com",
+    portfolio: "https://example.com",
+    resume: "#",
+    communities: "Web Development Club",
+    achievements:
+      "Developed responsive websites and participated in coding competitions.",
+    whyJoin:
+      "I want to work on real-world applications and improve my development skills.",
   },
   {
     id: "APP004",
@@ -59,6 +108,15 @@ const applicants = [
     cgpa: "8.5",
     preferredRole: "UI/UX Designer",
     status: "Rejected",
+    linkedin: "https://linkedin.com",
+    github: "https://github.com",
+    portfolio: "https://example.com",
+    resume: "#",
+    communities: "Design Club",
+    achievements:
+      "Created multiple UI/UX case studies and design prototypes.",
+    whyJoin:
+      "I want to collaborate with developers and create meaningful user experiences.",
   },
   {
     id: "APP005",
@@ -73,6 +131,15 @@ const applicants = [
     cgpa: "8.8",
     preferredRole: "Cloud Engineer",
     status: "Shortlisted",
+    linkedin: "https://linkedin.com",
+    github: "https://github.com",
+    portfolio: "https://example.com",
+    resume: "#",
+    communities: "AWS Club",
+    achievements:
+      "Worked on cloud-based projects and completed cloud computing certifications.",
+    whyJoin:
+      "I want to gain practical cloud engineering experience and work with modern infrastructure.",
   },
   {
     id: "APP006",
@@ -87,6 +154,15 @@ const applicants = [
     cgpa: "9.0",
     preferredRole: "DevOps Engineer",
     status: "Selected",
+    linkedin: "https://linkedin.com",
+    github: "https://github.com",
+    portfolio: "https://example.com",
+    resume: "#",
+    communities: "DevOps Community",
+    achievements:
+      "Worked with CI/CD tools and deployed applications using cloud platforms.",
+    whyJoin:
+      "I want to improve my DevOps skills by working on production-level systems.",
   },
   {
     id: "APP007",
@@ -101,6 +177,15 @@ const applicants = [
     cgpa: "8.3",
     preferredRole: "Software Engineer",
     status: "Pending",
+    linkedin: "https://linkedin.com",
+    github: "https://github.com",
+    portfolio: "https://example.com",
+    resume: "#",
+    communities: "Coding Club",
+    achievements:
+      "Built academic and personal software projects.",
+    whyJoin:
+      "I want to transition my programming knowledge into practical software development.",
   },
   {
     id: "APP008",
@@ -115,6 +200,15 @@ const applicants = [
     cgpa: "8.6",
     preferredRole: "Data Analyst",
     status: "Shortlisted",
+    linkedin: "https://linkedin.com",
+    github: "https://github.com",
+    portfolio: "https://example.com",
+    resume: "#",
+    communities: "Analytics Club",
+    achievements:
+      "Created dashboards and performed data analysis projects.",
+    whyJoin:
+      "I want to develop stronger analytical skills through practical projects.",
   },
   {
     id: "APP009",
@@ -129,6 +223,15 @@ const applicants = [
     cgpa: "7.9",
     preferredRole: "Web Developer",
     status: "Rejected",
+    linkedin: "https://linkedin.com",
+    github: "https://github.com",
+    portfolio: "https://example.com",
+    resume: "#",
+    communities: "Web Club",
+    achievements:
+      "Developed several frontend projects.",
+    whyJoin:
+      "I want to improve my web development skills through practical experience.",
   },
   {
     id: "APP010",
@@ -143,6 +246,15 @@ const applicants = [
     cgpa: "8.9",
     preferredRole: "UI/UX Designer",
     status: "Selected",
+    linkedin: "https://linkedin.com",
+    github: "https://github.com",
+    portfolio: "https://example.com",
+    resume: "#",
+    communities: "Design Club",
+    achievements:
+      "Created UI/UX prototypes and participated in design competitions.",
+    whyJoin:
+      "I want to create user-focused products while collaborating with technical teams.",
   },
   {
     id: "APP011",
@@ -157,6 +269,15 @@ const applicants = [
     cgpa: "8.4",
     preferredRole: "Cloud Engineer",
     status: "Pending",
+    linkedin: "https://linkedin.com",
+    github: "https://github.com",
+    portfolio: "https://example.com",
+    resume: "#",
+    communities: "AWS Club",
+    achievements:
+      "Built cloud-based academic projects.",
+    whyJoin:
+      "I want to strengthen my cloud computing and infrastructure skills.",
   },
   {
     id: "APP012",
@@ -171,6 +292,15 @@ const applicants = [
     cgpa: "8.8",
     preferredRole: "DevOps Engineer",
     status: "Shortlisted",
+    linkedin: "https://linkedin.com",
+    github: "https://github.com",
+    portfolio: "https://example.com",
+    resume: "#",
+    communities: "Cloud Club",
+    achievements:
+      "Worked with deployment automation and cloud services.",
+    whyJoin:
+      "I want to gain hands-on experience with DevOps practices.",
   },
   {
     id: "APP013",
@@ -185,6 +315,15 @@ const applicants = [
     cgpa: "8.1",
     preferredRole: "Software Engineer",
     status: "Selected",
+    linkedin: "https://linkedin.com",
+    github: "https://github.com",
+    portfolio: "https://example.com",
+    resume: "#",
+    communities: "Coding Club",
+    achievements:
+      "Participated in coding competitions and software projects.",
+    whyJoin:
+      "I want to become a better software engineer by working on real applications.",
   },
   {
     id: "APP014",
@@ -199,6 +338,15 @@ const applicants = [
     cgpa: "9.2",
     preferredRole: "Data Analyst",
     status: "Pending",
+    linkedin: "https://linkedin.com",
+    github: "https://github.com",
+    portfolio: "https://example.com",
+    resume: "#",
+    communities: "Data Science Club",
+    achievements:
+      "Worked on data visualization and analytics projects.",
+    whyJoin:
+      "I want to use data to solve practical business problems.",
   },
   {
     id: "APP015",
@@ -213,6 +361,15 @@ const applicants = [
     cgpa: "8.0",
     preferredRole: "Web Developer",
     status: "Shortlisted",
+    linkedin: "https://linkedin.com",
+    github: "https://github.com",
+    portfolio: "https://example.com",
+    resume: "#",
+    communities: "Web Development Club",
+    achievements:
+      "Built responsive web applications.",
+    whyJoin:
+      "I want to improve my frontend and backend development skills.",
   },
   {
     id: "APP016",
@@ -227,6 +384,15 @@ const applicants = [
     cgpa: "8.7",
     preferredRole: "UI/UX Designer",
     status: "Rejected",
+    linkedin: "https://linkedin.com",
+    github: "https://github.com",
+    portfolio: "https://example.com",
+    resume: "#",
+    communities: "Design Club",
+    achievements:
+      "Created several interface designs and prototypes.",
+    whyJoin:
+      "I want to work on products where design and technology come together.",
   },
   {
     id: "APP017",
@@ -241,6 +407,15 @@ const applicants = [
     cgpa: "9.0",
     preferredRole: "Cloud Engineer",
     status: "Selected",
+    linkedin: "https://linkedin.com",
+    github: "https://github.com",
+    portfolio: "https://example.com",
+    resume: "#",
+    communities: "AWS Club",
+    achievements:
+      "Worked on cloud deployment projects.",
+    whyJoin:
+      "I want to build scalable cloud solutions.",
   },
   {
     id: "APP018",
@@ -255,6 +430,15 @@ const applicants = [
     cgpa: "8.5",
     preferredRole: "DevOps Engineer",
     status: "Pending",
+    linkedin: "https://linkedin.com",
+    github: "https://github.com",
+    portfolio: "https://example.com",
+    resume: "#",
+    communities: "DevOps Club",
+    achievements:
+      "Worked on automation and deployment projects.",
+    whyJoin:
+      "I want to learn how modern applications are deployed and maintained.",
   },
   {
     id: "APP019",
@@ -269,6 +453,15 @@ const applicants = [
     cgpa: "8.3",
     preferredRole: "Software Engineer",
     status: "Shortlisted",
+    linkedin: "https://linkedin.com",
+    github: "https://github.com",
+    portfolio: "https://example.com",
+    resume: "#",
+    communities: "Coding Club",
+    achievements:
+      "Built multiple programming projects.",
+    whyJoin:
+      "I want to gain professional software development experience.",
   },
   {
     id: "APP020",
@@ -283,6 +476,15 @@ const applicants = [
     cgpa: "9.1",
     preferredRole: "Data Analyst",
     status: "Selected",
+    linkedin: "https://linkedin.com",
+    github: "https://github.com",
+    portfolio: "https://example.com",
+    resume: "#",
+    communities: "Analytics Club",
+    achievements:
+      "Created analytical dashboards and reports.",
+    whyJoin:
+      "I want to apply analytical thinking to real-world problems.",
   },
   {
     id: "APP021",
@@ -297,6 +499,15 @@ const applicants = [
     cgpa: "8.2",
     preferredRole: "Web Developer",
     status: "Pending",
+    linkedin: "https://linkedin.com",
+    github: "https://github.com",
+    portfolio: "https://example.com",
+    resume: "#",
+    communities: "Web Club",
+    achievements:
+      "Built frontend applications.",
+    whyJoin:
+      "I want to improve my full-stack development skills.",
   },
   {
     id: "APP022",
@@ -311,6 +522,15 @@ const applicants = [
     cgpa: "8.9",
     preferredRole: "UI/UX Designer",
     status: "Shortlisted",
+    linkedin: "https://linkedin.com",
+    github: "https://github.com",
+    portfolio: "https://example.com",
+    resume: "#",
+    communities: "Design Club",
+    achievements:
+      "Created UI design systems and prototypes.",
+    whyJoin:
+      "I want to create intuitive and accessible user experiences.",
   },
   {
     id: "APP023",
@@ -325,6 +545,15 @@ const applicants = [
     cgpa: "7.8",
     preferredRole: "Cloud Engineer",
     status: "Rejected",
+    linkedin: "https://linkedin.com",
+    github: "https://github.com",
+    portfolio: "https://example.com",
+    resume: "#",
+    communities: "AWS Club",
+    achievements:
+      "Worked on cloud computing projects.",
+    whyJoin:
+      "I want to learn more about cloud technologies.",
   },
   {
     id: "APP024",
@@ -339,6 +568,15 @@ const applicants = [
     cgpa: "9.0",
     preferredRole: "DevOps Engineer",
     status: "Selected",
+    linkedin: "https://linkedin.com",
+    github: "https://github.com",
+    portfolio: "https://example.com",
+    resume: "#",
+    communities: "DevOps Club",
+    achievements:
+      "Worked with deployment and automation tools.",
+    whyJoin:
+      "I want to learn production-grade DevOps practices.",
   },
   {
     id: "APP025",
@@ -353,6 +591,15 @@ const applicants = [
     cgpa: "8.6",
     preferredRole: "Software Engineer",
     status: "Pending",
+    linkedin: "https://linkedin.com",
+    github: "https://github.com",
+    portfolio: "https://example.com",
+    resume: "#",
+    communities: "Coding Club",
+    achievements:
+      "Built software projects using modern technologies.",
+    whyJoin:
+      "I want to strengthen my software engineering skills.",
   },
   {
     id: "APP026",
@@ -367,6 +614,15 @@ const applicants = [
     cgpa: "8.8",
     preferredRole: "Data Analyst",
     status: "Shortlisted",
+    linkedin: "https://linkedin.com",
+    github: "https://github.com",
+    portfolio: "https://example.com",
+    resume: "#",
+    communities: "Data Club",
+    achievements:
+      "Created data visualization projects.",
+    whyJoin:
+      "I want to gain practical experience in analytics.",
   },
   {
     id: "APP027",
@@ -381,6 +637,15 @@ const applicants = [
     cgpa: "8.1",
     preferredRole: "Web Developer",
     status: "Selected",
+    linkedin: "https://linkedin.com",
+    github: "https://github.com",
+    portfolio: "https://example.com",
+    resume: "#",
+    communities: "Web Club",
+    achievements:
+      "Built responsive web applications.",
+    whyJoin:
+      "I want to work on scalable web applications.",
   },
   {
     id: "APP028",
@@ -395,6 +660,15 @@ const applicants = [
     cgpa: "9.0",
     preferredRole: "UI/UX Designer",
     status: "Pending",
+    linkedin: "https://linkedin.com",
+    github: "https://github.com",
+    portfolio: "https://example.com",
+    resume: "#",
+    communities: "Design Club",
+    achievements:
+      "Created product design case studies.",
+    whyJoin:
+      "I want to improve my product design skills.",
   },
   {
     id: "APP029",
@@ -409,6 +683,15 @@ const applicants = [
     cgpa: "8.4",
     preferredRole: "Cloud Engineer",
     status: "Shortlisted",
+    linkedin: "https://linkedin.com",
+    github: "https://github.com",
+    portfolio: "https://example.com",
+    resume: "#",
+    communities: "AWS Club",
+    achievements:
+      "Worked on cloud deployment projects.",
+    whyJoin:
+      "I want to develop strong cloud engineering skills.",
   },
   {
     id: "APP030",
@@ -423,6 +706,15 @@ const applicants = [
     cgpa: "8.3",
     preferredRole: "DevOps Engineer",
     status: "Rejected",
+    linkedin: "https://linkedin.com",
+    github: "https://github.com",
+    portfolio: "https://example.com",
+    resume: "#",
+    communities: "Cloud Club",
+    achievements:
+      "Worked on CI/CD projects.",
+    whyJoin:
+      "I want to improve my deployment and automation skills.",
   },
   {
     id: "APP031",
@@ -437,6 +729,15 @@ const applicants = [
     cgpa: "8.6",
     preferredRole: "Software Engineer",
     status: "Selected",
+    linkedin: "https://linkedin.com",
+    github: "https://github.com",
+    portfolio: "https://example.com",
+    resume: "#",
+    communities: "Coding Club",
+    achievements:
+      "Built multiple software projects.",
+    whyJoin:
+      "I want to develop professional software engineering experience.",
   },
   {
     id: "APP032",
@@ -451,6 +752,15 @@ const applicants = [
     cgpa: "9.3",
     preferredRole: "Data Analyst",
     status: "Pending",
+    linkedin: "https://linkedin.com",
+    github: "https://github.com",
+    portfolio: "https://example.com",
+    resume: "#",
+    communities: "Analytics Club",
+    achievements:
+      "Worked on analytics and visualization projects.",
+    whyJoin:
+      "I want to solve real-world problems using data.",
   },
   {
     id: "APP033",
@@ -465,6 +775,15 @@ const applicants = [
     cgpa: "8.0",
     preferredRole: "Web Developer",
     status: "Shortlisted",
+    linkedin: "https://linkedin.com",
+    github: "https://github.com",
+    portfolio: "https://example.com",
+    resume: "#",
+    communities: "Web Club",
+    achievements:
+      "Developed frontend projects.",
+    whyJoin:
+      "I want to improve my web development experience.",
   },
   {
     id: "APP034",
@@ -479,6 +798,15 @@ const applicants = [
     cgpa: "9.1",
     preferredRole: "UI/UX Designer",
     status: "Selected",
+    linkedin: "https://linkedin.com",
+    github: "https://github.com",
+    portfolio: "https://example.com",
+    resume: "#",
+    communities: "Design Club",
+    achievements:
+      "Created multiple product design projects.",
+    whyJoin:
+      "I want to contribute to meaningful digital products.",
   },
   {
     id: "APP035",
@@ -493,6 +821,15 @@ const applicants = [
     cgpa: "8.5",
     preferredRole: "Cloud Engineer",
     status: "Pending",
+    linkedin: "https://linkedin.com",
+    github: "https://github.com",
+    portfolio: "https://example.com",
+    resume: "#",
+    communities: "AWS Club",
+    achievements:
+      "Worked on cloud computing projects.",
+    whyJoin:
+      "I want to learn cloud technologies through practical experience.",
   },
   {
     id: "APP036",
@@ -507,6 +844,15 @@ const applicants = [
     cgpa: "8.9",
     preferredRole: "DevOps Engineer",
     status: "Shortlisted",
+    linkedin: "https://linkedin.com",
+    github: "https://github.com",
+    portfolio: "https://example.com",
+    resume: "#",
+    communities: "DevOps Club",
+    achievements:
+      "Worked with deployment automation tools.",
+    whyJoin:
+      "I want to gain practical experience with modern DevOps workflows.",
   },
   {
     id: "APP037",
@@ -521,6 +867,15 @@ const applicants = [
     cgpa: "7.9",
     preferredRole: "Software Engineer",
     status: "Rejected",
+    linkedin: "https://linkedin.com",
+    github: "https://github.com",
+    portfolio: "https://example.com",
+    resume: "#",
+    communities: "Coding Club",
+    achievements:
+      "Built academic software projects.",
+    whyJoin:
+      "I want to improve my programming and software engineering skills.",
   },
   {
     id: "APP038",
@@ -535,6 +890,15 @@ const applicants = [
     cgpa: "9.2",
     preferredRole: "Data Analyst",
     status: "Selected",
+    linkedin: "https://linkedin.com",
+    github: "https://github.com",
+    portfolio: "https://example.com",
+    resume: "#",
+    communities: "Data Science Club",
+    achievements:
+      "Worked on data analysis and visualization projects.",
+    whyJoin:
+      "I want to use data-driven approaches to solve business problems.",
   },
   {
     id: "APP039",
@@ -549,6 +913,15 @@ const applicants = [
     cgpa: "8.4",
     preferredRole: "Web Developer",
     status: "Pending",
+    linkedin: "https://linkedin.com",
+    github: "https://github.com",
+    portfolio: "https://example.com",
+    resume: "#",
+    communities: "Web Club",
+    achievements:
+      "Developed web applications using modern technologies.",
+    whyJoin:
+      "I want to gain professional web development experience.",
   },
   {
     id: "APP040",
@@ -563,245 +936,513 @@ const applicants = [
     cgpa: "8.8",
     preferredRole: "UI/UX Designer",
     status: "Shortlisted",
+    linkedin: "https://linkedin.com",
+    github: "https://github.com",
+    portfolio: "https://example.com",
+    resume: "#",
+    communities: "Design Club",
+    achievements:
+      "Created UI/UX projects and participated in design events.",
+    whyJoin:
+      "I want to contribute to user-focused digital products.",
   },
 ];
 
 export default function ApplicantDetails() {
   const params = useParams();
+  const searchParams = useSearchParams();
 
-  const applicantId = String(params.id);
+  const applicantId = decodeURIComponent(String(params.id));
 
-  const applicant = applicants.find(
-    (item) => item.id === applicantId
+  const applicantIndex = applicants.findIndex(
+    (applicant) => applicant.id === applicantId
   );
+
+  const applicant = applicants[applicantIndex];
+
+  /* Preserve dashboard search/filter/sort context */
+  const dashboardQuery = searchParams.toString();
+
+  const dashboardUrl = dashboardQuery
+    ? `/dashboard?${dashboardQuery}`
+    : "/dashboard";
+
+  const previousApplicant =
+    applicantIndex > 0
+      ? applicants[applicantIndex - 1]
+      : null;
+
+  const nextApplicant =
+    applicantIndex < applicants.length - 1
+      ? applicants[applicantIndex + 1]
+      : null;
+
+  const applicantUrl = (id: string) => {
+    return dashboardQuery
+      ? `/applications/${id}?${dashboardQuery}`
+      : `/applications/${id}`;
+  };
 
   if (!applicant) {
     return (
-      <main className="min-h-screen bg-slate-950 text-white p-8">
-        <div className="max-w-6xl mx-auto">
+      <main className="min-h-screen bg-[#030712] px-6 py-10 text-white">
+
+        <div className="mx-auto max-w-4xl">
 
           <Link
-            href="/dashboard"
-            className="text-blue-400 hover:underline"
+            href={dashboardUrl}
+            className="inline-flex items-center gap-2 text-sm text-blue-400 transition hover:text-blue-300"
           >
             ← Back to Dashboard
           </Link>
 
-          <div className="mt-8 rounded-xl border border-red-500/30 bg-red-500/10 p-8">
+          <div className="mt-8 rounded-2xl border border-red-400/20 bg-red-400/[0.05] p-8 backdrop-blur-xl">
+
+            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-red-500/10 text-xl">
+              !
+            </div>
+
             <h1 className="text-2xl font-bold">
               Applicant Not Found
             </h1>
 
             <p className="mt-2 text-slate-400">
-              No applicant found with ID: {applicantId}
+              No applicant was found with application ID{" "}
+              <span className="font-medium text-white">
+                {applicantId}
+              </span>
+              .
             </p>
+
           </div>
 
         </div>
+
       </main>
     );
   }
 
   return (
-    <main className="min-h-screen bg-slate-950 text-white p-6 md:p-8">
+    <main className="relative min-h-screen overflow-hidden bg-[#030712] text-white">
 
-      <div className="max-w-6xl mx-auto">
+      {/* =========================================
+          BACKGROUND
+      ========================================== */}
 
-        <Link
-          href="/dashboard"
-          className="inline-block mb-6 text-blue-400 hover:text-blue-300 hover:underline"
-        >
-          ← Back to Dashboard
-        </Link>
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
 
-        {/* Header */}
-        <div className="rounded-xl border border-slate-800 bg-slate-900 p-6 mb-6">
+        <div className="absolute -left-40 -top-40 h-[500px] w-[500px] rounded-full bg-blue-600/[0.06] blur-[130px]" />
 
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div className="absolute right-[-150px] top-1/4 h-[500px] w-[500px] rounded-full bg-cyan-500/[0.05] blur-[130px]" />
 
-            <div>
-              <p className="text-sm text-slate-400">
-                Application ID
-              </p>
+        <div className="absolute bottom-[-150px] left-1/3 h-[400px] w-[400px] rounded-full bg-indigo-600/[0.05] blur-[120px]" />
 
-              <h1 className="text-3xl font-bold mt-1">
-                {applicant.id}
-              </h1>
+      </div>
 
-              <p className="text-xl text-slate-300 mt-2">
-                {applicant.fullName}
-              </p>
-            </div>
+      <div className="relative z-10 mx-auto max-w-6xl px-5 py-8 md:px-8 md:py-10">
 
-            <span className="w-fit rounded-full bg-blue-500/20 px-4 py-2 text-sm text-blue-300">
-              {applicant.status}
+        {/* =========================================
+            TOP NAVIGATION
+        ========================================== */}
+
+        <div className="mb-7 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+
+          <Link
+            href={dashboardUrl}
+            className="inline-flex w-fit items-center gap-2 rounded-lg border border-white/[0.08] bg-white/[0.03] px-4 py-2.5 text-sm text-slate-300 backdrop-blur-xl transition-all duration-200 hover:border-blue-400/20 hover:bg-blue-500/[0.05] hover:text-blue-300"
+          >
+            ← Back to Dashboard
+          </Link>
+
+          <div className="text-sm text-slate-500">
+            Applicant{" "}
+            <span className="font-medium text-slate-300">
+              {applicantIndex + 1}
+            </span>{" "}
+            of{" "}
+            <span className="font-medium text-slate-300">
+              {applicants.length}
             </span>
-
           </div>
 
         </div>
 
-        {/* Personal Information */}
-        <section className="rounded-xl border border-slate-800 bg-slate-900 p-6 mb-6">
+        {/* =========================================
+            PROFILE HEADER
+        ========================================== */}
 
-          <h2 className="text-xl font-semibold mb-5">
-            Personal Information
-          </h2>
+        <section className="group relative mb-6 overflow-hidden rounded-3xl border border-white/[0.08] bg-slate-900/75 p-6 shadow-2xl shadow-black/20 backdrop-blur-2xl md:p-8">
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* glossy top line */}
+          <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-blue-400/50 to-transparent" />
 
-            <Detail
-              label="Full Name"
-              value={applicant.fullName}
-            />
+          {/* glow */}
+          <div className="pointer-events-none absolute -right-20 -top-20 h-60 w-60 rounded-full bg-blue-500/[0.08] blur-3xl" />
 
-            <Detail
-              label="Registration Number"
-              value={applicant.registrationNumber}
-            />
+          <div className="relative flex flex-col gap-7 md:flex-row md:items-center md:justify-between">
 
-            <Detail
-              label="University Email"
-              value={applicant.email}
-            />
+            <div className="flex items-center gap-5">
 
-            <Detail
-              label="Personal Email"
-              value={applicant.personalEmail}
-            />
+              {/* Avatar */}
+              <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl border border-blue-400/20 bg-blue-500/[0.08] text-2xl font-bold text-blue-300 shadow-lg shadow-blue-500/[0.05]">
 
-            <Detail
-              label="Phone"
-              value={applicant.phone}
-            />
+                {getInitials(applicant.fullName)}
 
-          </div>
+              </div>
 
-        </section>
+              <div>
 
-        {/* Academic Information */}
-        <section className="rounded-xl border border-slate-800 bg-slate-900 p-6 mb-6">
+                <div className="mb-2 flex flex-wrap items-center gap-3">
 
-          <h2 className="text-xl font-semibold mb-5">
-            Academic Information
-          </h2>
+                  <span className="text-xs font-medium tracking-wider text-blue-400">
+                    APPLICATION {applicant.id}
+                  </span>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                  <StatusBadge status={applicant.status} />
 
-            <Detail
-              label="Program"
-              value={applicant.program}
-            />
+                </div>
 
-            <Detail
-              label="Branch"
-              value={applicant.branch}
-            />
+                <h1 className="text-2xl font-bold tracking-tight text-white md:text-4xl">
+                  {applicant.fullName}
+                </h1>
 
-            <Detail
-              label="Semester"
-              value={applicant.semester}
-            />
+                <p className="mt-2 text-sm text-slate-400">
+                  {applicant.preferredRole}
+                  <span className="mx-2 text-slate-700">
+                    •
+                  </span>
+                  {applicant.program}
+                  <span className="mx-2 text-slate-700">
+                    •
+                  </span>
+                  {applicant.branch}
+                </p>
 
-            <Detail
-              label="CGPA"
-              value={applicant.cgpa}
-            />
+              </div>
 
-          </div>
+            </div>
 
-        </section>
+            <div className="rounded-xl border border-white/[0.07] bg-white/[0.03] px-5 py-4">
 
-        {/* Recruitment Information */}
-        <section className="rounded-xl border border-slate-800 bg-slate-900 p-6 mb-6">
+              <p className="text-xs text-slate-500">
+                Registration Number
+              </p>
 
-          <h2 className="text-xl font-semibold mb-5">
-            Recruitment Information
-          </h2>
+              <p className="mt-1 font-mono text-sm font-medium text-blue-300">
+                {applicant.registrationNumber}
+              </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-            <Detail
-              label="Preferred Role"
-              value={applicant.preferredRole}
-            />
-
-            <Detail
-              label="Application Status"
-              value={applicant.status}
-            />
+            </div>
 
           </div>
 
         </section>
 
-        {/* Links */}
-        <section className="rounded-xl border border-slate-800 bg-slate-900 p-6 mb-6">
+        {/* =========================================
+            QUICK STATS
+        ========================================== */}
 
-          <h2 className="text-xl font-semibold mb-5">
-            Links & Documents
-          </h2>
+        <div className="mb-6 grid grid-cols-2 gap-4 md:grid-cols-4">
 
-          <div className="flex flex-wrap gap-4">
+          <QuickStat
+            label="CGPA"
+            value={applicant.cgpa}
+          />
 
-            <a
-              href="https://linkedin.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="rounded-lg bg-slate-800 px-4 py-2 text-blue-400 hover:bg-slate-700"
+          <QuickStat
+            label="Semester"
+            value={applicant.semester}
+          />
+
+          <QuickStat
+            label="Program"
+            value={applicant.program}
+          />
+
+          <QuickStat
+            label="Branch"
+            value={applicant.branch}
+          />
+
+        </div>
+
+        {/* =========================================
+            PERSONAL + CONTACT
+        ========================================== */}
+
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+
+          <InfoCard
+            title="Personal Information"
+            description="Basic applicant information"
+          >
+
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+
+              <Detail
+                label="Full Name"
+                value={applicant.fullName}
+              />
+
+              <Detail
+                label="Registration Number"
+                value={applicant.registrationNumber}
+              />
+
+              <Detail
+                label="Program"
+                value={applicant.program}
+              />
+
+              <Detail
+                label="Branch"
+                value={applicant.branch}
+              />
+
+              <Detail
+                label="Semester"
+                value={applicant.semester}
+              />
+
+              <Detail
+                label="CGPA"
+                value={applicant.cgpa}
+              />
+
+            </div>
+
+          </InfoCard>
+
+          <InfoCard
+            title="Contact Information"
+            description="Applicant contact details"
+          >
+
+            <div className="space-y-5">
+
+              <Detail
+                label="University Email"
+                value={applicant.email}
+                href={`mailto:${applicant.email}`}
+              />
+
+              <Detail
+                label="Personal Email"
+                value={applicant.personalEmail}
+                href={`mailto:${applicant.personalEmail}`}
+              />
+
+              <Detail
+                label="Phone"
+                value={applicant.phone}
+                href={`tel:${applicant.phone}`}
+              />
+
+            </div>
+
+          </InfoCard>
+
+        </div>
+
+        {/* =========================================
+            RECRUITMENT INFORMATION
+        ========================================== */}
+
+        <div className="mt-6">
+
+          <InfoCard
+            title="Recruitment Information"
+            description="Application and role preferences"
+          >
+
+            <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
+
+              <Detail
+                label="Application ID"
+                value={applicant.id}
+              />
+
+              <Detail
+                label="Preferred Role"
+                value={applicant.preferredRole}
+              />
+
+              <div>
+
+                <p className="mb-2 text-xs font-medium uppercase tracking-wider text-slate-500">
+                  Current Status
+                </p>
+
+                <StatusBadge status={applicant.status} />
+
+              </div>
+
+            </div>
+
+          </InfoCard>
+
+        </div>
+
+        {/* =========================================
+            LINKS
+        ========================================== */}
+
+        <div className="mt-6">
+
+          <InfoCard
+            title="Links & Documents"
+            description="Applicant profiles and resume"
+          >
+
+            <div className="flex flex-wrap gap-3">
+
+              <ProfileLink
+                label="LinkedIn"
+                href={applicant.linkedin}
+                icon="in"
+              />
+
+              <ProfileLink
+                label="GitHub"
+                href={applicant.github}
+                icon="⌘"
+              />
+
+              <ProfileLink
+                label="Portfolio"
+                href={applicant.portfolio}
+                icon="↗"
+              />
+
+              <ProfileLink
+                label="Resume"
+                href={applicant.resume}
+                icon="↓"
+              />
+
+            </div>
+
+          </InfoCard>
+
+        </div>
+
+        {/* =========================================
+            COMMUNITIES + ACHIEVEMENTS
+        ========================================== */}
+
+        <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
+
+          <InfoCard
+            title="Communities"
+            description="Clubs and communities"
+          >
+
+            <div className="flex flex-wrap gap-2">
+
+              {applicant.communities
+                .split(",")
+                .map((community) => (
+                  <span
+                    key={community}
+                    className="rounded-full border border-blue-400/15 bg-blue-500/[0.07] px-3 py-1.5 text-sm text-blue-300"
+                  >
+                    {community.trim()}
+                  </span>
+                ))}
+
+            </div>
+
+          </InfoCard>
+
+          <InfoCard
+            title="Achievements"
+            description="Highlights and accomplishments"
+          >
+
+            <p className="text-sm leading-7 text-slate-300">
+              {applicant.achievements}
+            </p>
+
+          </InfoCard>
+
+        </div>
+
+        {/* =========================================
+            WHY JOIN
+        ========================================== */}
+
+        <div className="mt-6">
+
+          <InfoCard
+            title="Why do you want to join?"
+            description="Applicant response"
+          >
+
+            <div className="rounded-xl border border-white/[0.06] bg-black/[0.12] p-5">
+
+              <p className="text-base leading-8 text-slate-300">
+                &quot;{applicant.whyJoin}&quot;
+              </p>
+
+            </div>
+
+          </InfoCard>
+
+        </div>
+
+        {/* =========================================
+            PREVIOUS / NEXT
+        ========================================== */}
+
+        <div className="mt-8 flex flex-col gap-4 border-t border-white/[0.06] pt-6 sm:flex-row sm:justify-between">
+
+          {previousApplicant ? (
+            <Link
+              href={applicantUrl(previousApplicant.id)}
+              className="group rounded-xl border border-white/[0.08] bg-white/[0.03] px-5 py-4 transition-all duration-200 hover:border-blue-400/20 hover:bg-blue-500/[0.04]"
             >
-              LinkedIn
-            </a>
 
-            <a
-              href="https://github.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="rounded-lg bg-slate-800 px-4 py-2 text-blue-400 hover:bg-slate-700"
+              <p className="text-xs text-slate-500">
+                ← Previous Applicant
+              </p>
+
+              <p className="mt-1 font-medium text-slate-200 group-hover:text-blue-300">
+                {previousApplicant.id}
+                <span className="mx-2 text-slate-600">
+                  •
+                </span>
+                {previousApplicant.fullName}
+              </p>
+
+            </Link>
+          ) : (
+            <div />
+          )}
+
+          {nextApplicant ? (
+            <Link
+              href={applicantUrl(nextApplicant.id)}
+              className="group text-left rounded-xl border border-white/[0.08] bg-white/[0.03] px-5 py-4 transition-all duration-200 hover:border-blue-400/20 hover:bg-blue-500/[0.04] sm:text-right"
             >
-              GitHub
-            </a>
 
-            <a
-              href="https://example.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="rounded-lg bg-slate-800 px-4 py-2 text-blue-400 hover:bg-slate-700"
-            >
-              Portfolio
-            </a>
+              <p className="text-xs text-slate-500">
+                Next Applicant →
+              </p>
 
-          </div>
+              <p className="mt-1 font-medium text-slate-200 group-hover:text-blue-300">
+                {nextApplicant.fullName}
+                <span className="mx-2 text-slate-600">
+                  •
+                </span>
+                {nextApplicant.id}
+              </p>
 
-        </section>
+            </Link>
+          ) : (
+            <div />
+          )}
 
-        {/* Additional Information */}
-        <section className="rounded-xl border border-slate-800 bg-slate-900 p-6">
-
-          <h2 className="text-xl font-semibold mb-5">
-            Additional Information
-          </h2>
-
-          <div className="space-y-6">
-
-            <Detail
-              label="Communities"
-              value="AWS Club, Coding Club"
-            />
-
-            <Detail
-              label="Achievements"
-              value="Participated in multiple hackathons and technical events."
-            />
-
-            <Detail
-              label="Why do you want to join?"
-              value="I want to gain practical industry experience and contribute to real-world projects."
-            />
-
-          </div>
-
-        </section>
+        </div>
 
       </div>
 
@@ -809,7 +1450,11 @@ export default function ApplicantDetails() {
   );
 }
 
-function Detail({
+/* ============================================================
+   QUICK STAT
+============================================================ */
+
+function QuickStat({
   label,
   value,
 }: {
@@ -817,14 +1462,205 @@ function Detail({
   value: string;
 }) {
   return (
-    <div>
-      <p className="text-sm text-slate-400 mb-1">
+    <div className="rounded-2xl border border-white/[0.08] bg-slate-900/70 p-4 backdrop-blur-xl transition-all duration-200 hover:border-blue-400/15 hover:bg-slate-900/90">
+
+      <p className="text-xs font-medium uppercase tracking-wider text-slate-500">
         {label}
       </p>
 
-      <p className="text-base text-white">
+      <p className="mt-2 truncate text-lg font-semibold text-white">
         {value}
       </p>
+
     </div>
   );
+}
+
+/* ============================================================
+   INFO CARD
+============================================================ */
+
+function InfoCard({
+  title,
+  description,
+  children,
+}: {
+  title: string;
+  description: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <section className="group relative overflow-hidden rounded-2xl border border-white/[0.08] bg-slate-900/70 p-6 backdrop-blur-xl transition-all duration-200 hover:border-white/[0.12] md:p-7">
+
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/15 to-transparent" />
+
+      <div className="mb-6">
+
+        <h2 className="text-lg font-semibold text-white">
+          {title}
+        </h2>
+
+        <p className="mt-1 text-xs text-slate-500">
+          {description}
+        </p>
+
+      </div>
+
+      {children}
+
+    </section>
+  );
+}
+
+/* ============================================================
+   DETAIL
+============================================================ */
+
+function Detail({
+  label,
+  value,
+  href,
+}: {
+  label: string;
+  value: string;
+  href?: string;
+}) {
+  return (
+    <div>
+
+      <p className="mb-1.5 text-xs font-medium uppercase tracking-wider text-slate-500">
+        {label}
+      </p>
+
+      {href ? (
+        <a
+          href={href}
+          className="break-all text-sm font-medium text-slate-200 transition-colors hover:text-blue-300 hover:underline"
+        >
+          {value}
+        </a>
+      ) : (
+        <p className="break-words text-sm font-medium text-slate-200">
+          {value}
+        </p>
+      )}
+
+    </div>
+  );
+}
+
+/* ============================================================
+   PROFILE LINK
+============================================================ */
+
+function ProfileLink({
+  label,
+  href,
+  icon,
+}: {
+  label: string;
+  href: string;
+  icon: string;
+}) {
+  return (
+    <a
+      href={href}
+      target={href === "#" ? undefined : "_blank"}
+      rel={href === "#" ? undefined : "noopener noreferrer"}
+      className="inline-flex items-center gap-3 rounded-xl border border-white/[0.08] bg-white/[0.03] px-4 py-3 text-sm font-medium text-slate-300 transition-all duration-200 hover:-translate-y-0.5 hover:border-blue-400/20 hover:bg-blue-500/[0.06] hover:text-blue-300"
+    >
+
+      <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-white/[0.05] text-xs font-bold text-blue-300">
+        {icon}
+      </span>
+
+      {label}
+
+      <span className="text-slate-600">
+        ↗
+      </span>
+
+    </a>
+  );
+}
+
+/* ============================================================
+   STATUS BADGE
+============================================================ */
+
+function StatusBadge({
+  status,
+}: {
+  status: string;
+}) {
+  const styles: Record<
+    string,
+    {
+      badge: string;
+      dot: string;
+    }
+  > = {
+    Pending: {
+      badge:
+        "border-yellow-400/20 bg-yellow-400/[0.08] text-yellow-300",
+      dot: "bg-yellow-400",
+    },
+
+    Shortlisted: {
+      badge:
+        "border-blue-400/20 bg-blue-400/[0.08] text-blue-300",
+      dot: "bg-blue-400",
+    },
+
+    "Interview Scheduled": {
+      badge:
+        "border-purple-400/20 bg-purple-400/[0.08] text-purple-300",
+      dot: "bg-purple-400",
+    },
+
+    Selected: {
+      badge:
+        "border-emerald-400/20 bg-emerald-400/[0.08] text-emerald-300",
+      dot: "bg-emerald-400",
+    },
+
+    Rejected: {
+      badge:
+        "border-red-400/20 bg-red-400/[0.08] text-red-300",
+      dot: "bg-red-400",
+    },
+  };
+
+  const current = styles[status] ?? {
+    badge:
+      "border-slate-400/20 bg-slate-400/[0.08] text-slate-300",
+    dot: "bg-slate-400",
+  };
+
+  return (
+    <span
+      className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-medium ${current.badge}`}
+    >
+
+      <span
+        className={`h-1.5 w-1.5 rounded-full ${current.dot}`}
+      />
+
+      {status}
+
+    </span>
+  );
+}
+
+/* ============================================================
+   INITIALS
+============================================================ */
+
+function getInitials(name: string) {
+  return name
+    .split(" ")
+    .map((part) => part[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
 }

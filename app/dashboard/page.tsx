@@ -460,6 +460,7 @@ export default function Dashboard() {
 
   const [showFilters, setShowFilters] = useState(false);
 
+  /* Debounced Search */
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearch(search);
@@ -468,6 +469,7 @@ export default function Dashboard() {
     return () => clearTimeout(timer);
   }, [search]);
 
+  /* Toggle Filter */
   const toggleFilter = (
     value: string,
     selected: string[],
@@ -480,6 +482,7 @@ export default function Dashboard() {
     }
   };
 
+  /* Clear All */
   const clearAllFilters = () => {
     setSearch("");
     setDebouncedSearch("");
@@ -489,6 +492,7 @@ export default function Dashboard() {
     setSelectedBranches([]);
   };
 
+  /* Sorting */
   const handleSort = (field: SortField) => {
     if (sortField === field) {
       setSortDirection((current) =>
@@ -500,6 +504,7 @@ export default function Dashboard() {
     }
   };
 
+  /* Filter + Search + Sort */
   const filteredApplications = useMemo(() => {
     const query = debouncedSearch.trim().toLowerCase();
 
@@ -562,12 +567,14 @@ export default function Dashboard() {
     sortDirection,
   ]);
 
+  /* Active filter count */
   const activeFilterCount =
     selectedStatuses.length +
     selectedRoles.length +
     selectedPrograms.length +
     selectedBranches.length;
 
+  /* Applicant URL */
   const createApplicantLink = (id: string) => {
     const params = new URLSearchParams();
 
@@ -598,80 +605,195 @@ export default function Dashboard() {
   };
 
   return (
-    <main className="min-h-screen bg-slate-950 text-white p-6 md:p-8">
-      <div className="max-w-7xl mx-auto">
+    <main className="relative min-h-screen overflow-hidden bg-[#020617] text-white p-6 md:p-8">
 
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold">
-            Recruitment Dashboard
-          </h1>
+      {/* ================================
+          BACKGROUND GLOW
+      ================================= */}
 
-          <p className="mt-2 text-slate-400">
-            Search, filter and manage recruitment applications
-          </p>
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+
+        <div className="absolute -left-32 -top-32 h-96 w-96 rounded-full bg-blue-600/10 blur-3xl" />
+
+        <div className="absolute right-[-100px] top-1/3 h-96 w-96 rounded-full bg-cyan-500/10 blur-3xl" />
+
+        <div className="absolute bottom-[-150px] left-1/3 h-96 w-96 rounded-full bg-indigo-600/10 blur-3xl" />
+
+      </div>
+
+      {/* ================================
+          MAIN CONTENT
+      ================================= */}
+
+      <div className="relative z-10 mx-auto max-w-7xl">
+
+        {/* ================================
+            HEADER
+        ================================= */}
+
+        <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+
+          <div>
+
+            <div className="mb-3 flex items-center gap-3">
+
+              <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-emerald-400 shadow-[0_0_14px_rgba(52,211,153,0.8)]" />
+
+              <span className="text-sm font-medium tracking-wider text-emerald-300">
+                RECRUITMENT PORTAL • LIVE
+              </span>
+
+            </div>
+
+            <h1 className="bg-gradient-to-r from-white via-blue-100 to-blue-400 bg-clip-text text-3xl font-bold text-transparent md:text-5xl">
+              Recruitment Dashboard
+            </h1>
+
+            <p className="mt-3 text-slate-400">
+              Search, filter and manage recruitment applications
+            </p>
+
+          </div>
+
+          <div className="w-fit rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-slate-300 backdrop-blur-xl">
+
+            <span className="text-blue-400">●</span>{" "}
+            System Active
+
+          </div>
+
         </div>
 
-        {/* Search and Filter Bar */}
-        <div className="rounded-xl border border-slate-800 bg-slate-900 p-5 mb-6">
+        {/* ================================
+            STATISTICS
+        ================================= */}
 
-          <div className="flex flex-col lg:flex-row gap-4">
+        <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+
+          <StatCard
+            title="Total Applications"
+            value={applications.length}
+            subtitle="All candidates"
+            icon="👥"
+          />
+
+          <StatCard
+            title="Shortlisted"
+            value={
+              applications.filter(
+                (application) =>
+                  application.status === "Shortlisted"
+              ).length
+            }
+            subtitle="Candidates shortlisted"
+            icon="✓"
+          />
+
+          <StatCard
+            title="Selected"
+            value={
+              applications.filter(
+                (application) =>
+                  application.status === "Selected"
+              ).length
+            }
+            subtitle="Successfully selected"
+            icon="★"
+          />
+
+          <StatCard
+            title="Pending"
+            value={
+              applications.filter(
+                (application) =>
+                  application.status === "Pending"
+              ).length
+            }
+            subtitle="Awaiting review"
+            icon="◷"
+          />
+
+        </div>
+
+        {/* ================================
+            SEARCH + FILTERS
+        ================================= */}
+
+        <div className="group relative mb-6 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.045] p-5 shadow-[0_20px_60px_rgba(0,0,0,0.2)] backdrop-blur-2xl">
+
+          {/* Glossy top edge */}
+          <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent" />
+
+          <div className="flex flex-col gap-4 lg:flex-row">
 
             {/* Search */}
             <div className="flex-1">
-              <label className="block text-sm text-slate-400 mb-2">
+
+              <label className="mb-2 block text-sm text-slate-400">
                 Search Applications
               </label>
 
               <div className="relative">
+
                 <input
                   type="text"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder="Search by name, application ID, registration number or email..."
-                  className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-3 text-white placeholder-slate-500 outline-none focus:border-blue-500"
+                  className="w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3.5 text-white placeholder-slate-500 outline-none backdrop-blur-xl transition-all duration-300 focus:border-blue-400/50 focus:bg-black/30 focus:ring-4 focus:ring-blue-500/10"
                 />
 
                 {search !== debouncedSearch && (
-                  <span className="absolute right-3 top-3 text-xs text-slate-500">
+                  <span className="absolute right-4 top-4 text-xs text-slate-500">
                     Searching...
                   </span>
                 )}
+
               </div>
+
             </div>
 
-            {/* Filter Button */}
+            {/* Filters */}
             <div className="flex items-end">
+
               <button
+                type="button"
                 onClick={() => setShowFilters(!showFilters)}
-                className="rounded-lg border border-slate-700 bg-slate-800 px-5 py-3 hover:bg-slate-700"
+                className="rounded-xl border border-blue-400/20 bg-blue-500/10 px-5 py-3.5 text-blue-200 backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:border-blue-400/40 hover:bg-blue-500/20 hover:shadow-[0_8px_25px_rgba(59,130,246,0.15)]"
               >
                 Filters
+
                 {activeFilterCount > 0 && (
                   <span className="ml-2 rounded-full bg-blue-600 px-2 py-1 text-xs">
                     {activeFilterCount}
                   </span>
                 )}
               </button>
+
             </div>
 
             {/* Clear */}
             <div className="flex items-end">
+
               <button
+                type="button"
                 onClick={clearAllFilters}
-                className="rounded-lg border border-slate-700 px-5 py-3 text-slate-300 hover:bg-slate-800"
+                className="rounded-xl border border-white/10 bg-white/5 px-5 py-3.5 text-slate-300 backdrop-blur-xl transition-all duration-300 hover:border-red-400/20 hover:bg-red-500/10 hover:text-red-300"
               >
                 Clear All
               </button>
+
             </div>
 
           </div>
 
-          {/* Filters */}
-          {showFilters && (
-            <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 border-t border-slate-800 pt-6">
+          {/* ================================
+              FILTER OPTIONS
+          ================================= */}
 
-              {/* Status */}
+          {showFilters && (
+            <div className="mt-6 grid grid-cols-1 gap-6 border-t border-white/10 pt-6 md:grid-cols-2 lg:grid-cols-4">
+
               <FilterGroup
                 title="Status"
                 options={statuses}
@@ -685,7 +807,6 @@ export default function Dashboard() {
                 }
               />
 
-              {/* Role */}
               <FilterGroup
                 title="Preferred Role"
                 options={roles}
@@ -699,7 +820,6 @@ export default function Dashboard() {
                 }
               />
 
-              {/* Program */}
               <FilterGroup
                 title="Program"
                 options={programs}
@@ -713,7 +833,6 @@ export default function Dashboard() {
                 }
               />
 
-              {/* Branch */}
               <FilterGroup
                 title="Branch"
                 options={branches}
@@ -730,9 +849,12 @@ export default function Dashboard() {
             </div>
           )}
 
-          {/* Active Filter Indicators */}
+          {/* ================================
+              ACTIVE FILTER CHIPS
+          ================================= */}
+
           {activeFilterCount > 0 && (
-            <div className="flex flex-wrap gap-2 mt-5 pt-5 border-t border-slate-800">
+            <div className="mt-5 flex flex-wrap gap-2 border-t border-white/10 pt-5">
 
               {selectedStatuses.map((status) => (
                 <FilterChip
@@ -792,11 +914,19 @@ export default function Dashboard() {
 
             </div>
           )}
+
         </div>
 
-        {/* Results Count */}
-        <div className="mb-4 flex justify-between items-center">
-          <p className="text-sm text-slate-400">
+        {/* ================================
+            RESULTS
+        ================================= */}
+
+        <div className="mb-4 flex items-center justify-between">
+
+          <p
+            className="text-sm text-slate-400"
+            aria-live="polite"
+          >
             Showing{" "}
             <span className="font-semibold text-white">
               {filteredApplications.length}
@@ -807,14 +937,27 @@ export default function Dashboard() {
             </span>{" "}
             applications
           </p>
+
+          {debouncedSearch && (
+            <span className="hidden text-xs text-slate-500 sm:block">
+              Search: &quot;{debouncedSearch}&quot;
+            </span>
+          )}
+
         </div>
 
-        {/* Table */}
-        <div className="overflow-x-auto rounded-xl border border-slate-800 bg-slate-900">
+        {/* ================================
+            TABLE
+        ================================= */}
 
-          <table className="w-full min-w-[1100px] text-left">
+        <div className="relative overflow-x-auto rounded-2xl border border-white/10 bg-white/[0.035] shadow-[0_20px_70px_rgba(0,0,0,0.25)] backdrop-blur-2xl">
 
-            <thead className="border-b border-slate-800 bg-slate-950">
+          {/* Glossy table top */}
+          <div className="pointer-events-none absolute inset-x-0 top-0 z-10 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent" />
+
+          <table className="w-full min-w-[1150px] text-left">
+
+            <thead className="border-b border-white/10 bg-white/[0.035]">
 
               <tr>
 
@@ -878,81 +1021,122 @@ export default function Dashboard() {
 
             </thead>
 
-            <tbody className="divide-y divide-slate-800">
+            <tbody className="divide-y divide-white/[0.06]">
 
               {filteredApplications.length === 0 ? (
+
                 <tr>
+
                   <td
                     colSpan={8}
-                    className="px-6 py-12 text-center text-slate-400"
+                    className="px-6 py-16 text-center"
                   >
-                    No applications found.
+
+                    <div className="mx-auto flex max-w-sm flex-col items-center">
+
+                      <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-2xl">
+                        🔍
+                      </div>
+
+                      <h3 className="text-lg font-semibold text-white">
+                        No applications found
+                      </h3>
+
+                      <p className="mt-2 text-sm text-slate-500">
+                        Try changing your search or filters.
+                      </p>
+
+                      <button
+                        type="button"
+                        onClick={clearAllFilters}
+                        className="mt-5 rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-sm text-slate-300 transition hover:bg-white/10"
+                      >
+                        Clear search & filters
+                      </button>
+
+                    </div>
+
                   </td>
+
                 </tr>
+
               ) : (
+
                 filteredApplications.map((application) => (
+
                   <tr
                     key={application.id}
-                    className="hover:bg-slate-800/50"
+                    className="group transition-all duration-200 hover:bg-white/[0.045]"
                   >
 
-                    {/* APPLICATION ID */}
+                    {/* Application ID */}
                     <td className="px-4 py-4 font-medium">
+
                       <Link
                         href={createApplicantLink(application.id)}
-                        className="text-blue-400 hover:text-blue-300 hover:underline"
+                        className="inline-flex items-center gap-1 font-medium text-blue-400 transition-all duration-200 group-hover:text-blue-300 hover:translate-x-0.5 hover:underline"
                       >
                         {application.id}
+                        <span className="text-xs opacity-0 transition-opacity group-hover:opacity-100">
+                          →
+                        </span>
                       </Link>
+
                     </td>
 
-                    {/* NAME */}
+                    {/* Candidate */}
                     <td className="px-4 py-4 font-medium">
+
                       <Link
                         href={createApplicantLink(application.id)}
-                        className="text-white hover:text-blue-400 hover:underline"
+                        className="text-white transition-colors duration-200 group-hover:text-blue-300 hover:underline"
                       >
                         {application.fullName}
                       </Link>
+
                     </td>
 
-                    {/* REGISTRATION NUMBER */}
+                    {/* Registration Number */}
                     <td className="px-4 py-4">
+
                       <Link
                         href={createApplicantLink(application.id)}
-                        className="text-blue-400 hover:text-blue-300 hover:underline"
+                        className="font-medium text-blue-400 transition-all duration-200 hover:text-blue-300 hover:underline"
                       >
                         {application.registrationNumber}
                       </Link>
+
                     </td>
 
-                    {/* EMAIL */}
+                    {/* Email */}
                     <td className="px-4 py-4 text-slate-400">
                       {application.email}
                     </td>
 
-                    {/* ROLE */}
+                    {/* Role */}
                     <td className="px-4 py-4 text-slate-300">
                       {application.preferredRole}
                     </td>
 
-                    {/* PROGRAM */}
+                    {/* Program */}
                     <td className="px-4 py-4 text-slate-300">
                       {application.program}
                     </td>
 
-                    {/* BRANCH */}
+                    {/* Branch */}
                     <td className="px-4 py-4 text-slate-300">
                       {application.branch}
                     </td>
 
-                    {/* STATUS */}
+                    {/* Status */}
                     <td className="px-4 py-4">
                       <StatusBadge status={application.status} />
                     </td>
 
                   </tr>
+
                 ))
+
               )}
 
             </tbody>
@@ -961,20 +1145,89 @@ export default function Dashboard() {
 
         </div>
 
-        {/* Bottom Note */}
-        <p className="mt-4 text-xs text-slate-500">
-          Click an Application ID, candidate name, or registration number
-          to view the applicant&apos;s complete details.
-        </p>
+        {/* Footer note */}
+        <div className="mt-4 flex flex-col gap-2 text-xs text-slate-500 sm:flex-row sm:items-center sm:justify-between">
+
+          <p>
+            Click an Application ID, candidate name, or registration number to view details.
+          </p>
+
+          <p>
+            Sorted by{" "}
+            <span className="text-slate-400">
+              {sortField}
+            </span>{" "}
+            ·{" "}
+            <span className="text-slate-400">
+              {sortDirection === "asc"
+                ? "Ascending"
+                : "Descending"}
+            </span>
+          </p>
+
+        </div>
 
       </div>
+
     </main>
   );
 }
 
-/* ================================
+/* ============================================================
+   STAT CARD
+============================================================ */
+
+function StatCard({
+  title,
+  value,
+  subtitle,
+  icon,
+}: {
+  title: string;
+  value: number;
+  subtitle: string;
+  icon: string;
+}) {
+  return (
+    <div className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.045] p-5 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-blue-400/30 hover:bg-white/[0.07] hover:shadow-[0_15px_50px_rgba(0,0,0,0.25)]">
+
+      {/* Glossy light */}
+      <div className="pointer-events-none absolute -right-10 -top-10 h-28 w-28 rounded-full bg-white/10 blur-2xl transition-all duration-500 group-hover:bg-blue-400/10" />
+
+      <div className="relative flex items-start justify-between">
+
+        <div>
+
+          <p className="text-sm text-slate-400">
+            {title}
+          </p>
+
+          <p className="mt-2 text-3xl font-bold tracking-tight text-white">
+            {value}
+          </p>
+
+          <p className="mt-1 text-xs text-slate-500">
+            {subtitle}
+          </p>
+
+        </div>
+
+        <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-lg backdrop-blur-md transition-transform duration-300 group-hover:scale-110">
+          {icon}
+        </div>
+
+      </div>
+
+      {/* Bottom shine */}
+      <div className="absolute bottom-0 left-0 h-px w-full bg-gradient-to-r from-transparent via-blue-400/50 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+
+    </div>
+  );
+}
+
+/* ============================================================
    FILTER GROUP
-================================ */
+============================================================ */
 
 function FilterGroup({
   title,
@@ -989,34 +1242,44 @@ function FilterGroup({
 }) {
   return (
     <div>
-      <h3 className="text-sm font-semibold text-slate-300 mb-3">
+
+      <h3 className="mb-3 text-sm font-semibold text-slate-300">
         {title}
       </h3>
 
       <div className="space-y-2">
+
         {options.map((option) => (
+
           <label
             key={option}
-            className="flex items-center gap-2 cursor-pointer text-sm text-slate-400 hover:text-white"
+            className="flex cursor-pointer items-center gap-3 rounded-lg px-2 py-2 text-sm text-slate-400 transition hover:bg-white/5 hover:text-white"
           >
+
             <input
               type="checkbox"
               checked={selected.includes(option)}
               onChange={() => onToggle(option)}
-              className="h-4 w-4 rounded border-slate-600 bg-slate-800"
+              className="h-4 w-4 cursor-pointer rounded border-slate-600 bg-slate-800 accent-blue-500"
             />
 
-            {option}
+            <span>
+              {option}
+            </span>
+
           </label>
+
         ))}
+
       </div>
+
     </div>
   );
 }
 
-/* ================================
+/* ============================================================
    FILTER CHIP
-================================ */
+============================================================ */
 
 function FilterChip({
   label,
@@ -1027,17 +1290,18 @@ function FilterChip({
 }) {
   return (
     <button
+      type="button"
       onClick={onRemove}
-      className="rounded-full bg-blue-500/10 px-3 py-1 text-xs text-blue-300 hover:bg-blue-500/20"
+      className="rounded-full border border-blue-400/20 bg-blue-500/10 px-3 py-1.5 text-xs text-blue-300 backdrop-blur-md transition-all duration-200 hover:border-blue-400/40 hover:bg-blue-500/20"
     >
       {label} ×
     </button>
   );
 }
 
-/* ================================
+/* ============================================================
    SORTABLE HEADER
-================================ */
+============================================================ */
 
 function SortableHeader({
   label,
@@ -1056,57 +1320,95 @@ function SortableHeader({
 
   return (
     <th className="px-4 py-4 text-sm font-semibold text-slate-300">
+
       <button
+        type="button"
         onClick={() => onSort(field)}
-        className="flex items-center gap-2 hover:text-white"
+        className="flex items-center gap-2 rounded-md transition-colors hover:text-white"
       >
+
         {label}
 
-        <span className="text-xs text-slate-500">
+        <span
+          className={`text-xs transition-colors ${
+            isActive
+              ? "text-blue-400"
+              : "text-slate-600"
+          }`}
+        >
           {isActive
             ? direction === "asc"
               ? "▲"
               : "▼"
             : "↕"}
         </span>
+
       </button>
+
     </th>
   );
 }
 
-/* ================================
+/* ============================================================
    STATUS BADGE
-================================ */
+============================================================ */
 
-function StatusBadge({ status }: { status: string }) {
+function StatusBadge({
+  status,
+}: {
+  status: string;
+}) {
   let className =
-    "bg-slate-500/10 text-slate-300";
+    "border-slate-400/20 bg-slate-400/10 text-slate-300";
+
+  let dotClass = "bg-slate-400";
 
   if (status === "Pending") {
-    className = "bg-yellow-500/10 text-yellow-300";
+    className =
+      "border-yellow-400/20 bg-yellow-400/10 text-yellow-300";
+
+    dotClass = "bg-yellow-400";
   }
 
   if (status === "Shortlisted") {
-    className = "bg-blue-500/10 text-blue-300";
+    className =
+      "border-blue-400/20 bg-blue-400/10 text-blue-300";
+
+    dotClass = "bg-blue-400";
   }
 
   if (status === "Interview Scheduled") {
-    className = "bg-purple-500/10 text-purple-300";
+    className =
+      "border-purple-400/20 bg-purple-400/10 text-purple-300";
+
+    dotClass = "bg-purple-400";
   }
 
   if (status === "Selected") {
-    className = "bg-green-500/10 text-green-300";
+    className =
+      "border-emerald-400/20 bg-emerald-400/10 text-emerald-300";
+
+    dotClass = "bg-emerald-400";
   }
 
   if (status === "Rejected") {
-    className = "bg-red-500/10 text-red-300";
+    className =
+      "border-red-400/20 bg-red-400/10 text-red-300";
+
+    dotClass = "bg-red-400";
   }
 
   return (
     <span
-      className={`inline-flex rounded-full px-3 py-1 text-xs font-medium ${className}`}
+      className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-medium backdrop-blur-md ${className}`}
     >
+
+      <span
+        className={`h-1.5 w-1.5 rounded-full ${dotClass}`}
+      />
+
       {status}
+
     </span>
   );
 }
