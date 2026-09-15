@@ -98,13 +98,13 @@ export default function Home() {
               </span>
             </div>
 
-            <h1 className="max-w-[1000px] text-[54px] font-semibold leading-[0.96] tracking-[-0.06em] sm:text-[76px] lg:text-[96px]">
+            <h1 className="max-w-250 text-[54px] font-semibold leading-[0.96] tracking-[-0.06em] sm:text-[76px] lg:text-[96px]">
               Build your
               <br />
               <span className="text-[#777]">next chapter.</span>
             </h1>
 
-            <p className="mt-9 max-w-[680px] text-[17px] leading-8 text-[#666]">
+            <p className="mt-9 max-w-170 text-[17px] leading-8 text-[#666]">
               Discover opportunities, build real things, connect with
               ambitious people, and take your next step with AWS LPU.
             </p>

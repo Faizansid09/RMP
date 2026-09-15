@@ -12,6 +12,7 @@ export async function GET(request: NextRequest) {
       {
         error,
       },
+      { status: 400 }
     );
   }
 
@@ -25,7 +26,8 @@ export async function GET(request: NextRequest) {
   }
 
   const state = request.cookies.get("aws_lpu_state")?.value;
-  const codeVerifier = request.cookies.get("aws_lpu_code_verifier")?.value;
+  const codeVerifier =
+    request.cookies.get("aws_lpu_code_verifier")?.value;
 
   if (!state || returnedState !== state) {
     return NextResponse.json(
@@ -76,6 +78,7 @@ export async function GET(request: NextRequest) {
         redirect_uri: redirectUri,
         code_verifier: codeVerifier,
       }),
+      cache: "no-store",
     }
   );
 
@@ -93,12 +96,22 @@ export async function GET(request: NextRequest) {
 
   const tokens = await tokenResponse.json();
 
+  if (!tokens.access_token) {
+    return NextResponse.json(
+      {
+        error: "No access token received",
+      },
+      { status: 400 }
+    );
+  }
+
   const userResponse = await fetch(
     "https://sso.awslpu.in/oauth/userinfo",
     {
       headers: {
         Authorization: `Bearer ${tokens.access_token}`,
       },
+      cache: "no-store",
     }
   );
 
@@ -117,6 +130,20 @@ export async function GET(request: NextRequest) {
 
   const response = NextResponse.redirect(
     new URL("/", request.url)
+  );
+
+  response.cookies.set(
+    "aws_lpu_access_token",
+    tokens.access_token,
+    {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+      ...(tokens.expires_in
+        ? { maxAge: tokens.expires_in }
+        : {}),
+    }
   );
 
   response.cookies.delete("aws_lpu_state");

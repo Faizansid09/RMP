@@ -1,12 +1,13 @@
+import Image from "next/image";
 import Link from "next/link";
+import { getCurrentUser } from "@/lib/auth";
 
-export default function Navbar() {
+export default async function Navbar() {
+  const user = await getCurrentUser();
+
   return (
     <nav className="relative z-10 flex h-16 items-center justify-between border-b border-[#dedede]">
-      <Link
-        href="/"
-        className="flex items-center gap-3"
-      >
+      <Link href="/" className="flex items-center gap-3">
         <div className="flex h-8 w-8 items-center justify-center rounded-full bg-black">
           <svg
             viewBox="0 0 24 24"
@@ -40,18 +41,54 @@ export default function Navbar() {
         </div>
       </Link>
 
-      <div className="hidden items-center gap-6 text-[11px] text-[#999] sm:flex">
-        <span>RECRUITMENT MANAGEMENT</span>
+      <div className="hidden items-center gap-6 text-[10px] uppercase tracking-widest text-[#999] sm:flex">
+        <span>Recruitment Management</span>
+
         <span className="h-1 w-1 rounded-full bg-[#bbb]" />
-        <span>SECURE ACCESS</span>
+
+        <span>Secure Access</span>
       </div>
 
-      <Link
-        href="/auth/login"
-        className="border border-[#cfcfcf] bg-white px-4 py-2 text-[13px] font-medium text-[#333] transition hover:border-[#999] hover:bg-[#fafafa]"
-      >
-        Sign in
-      </Link>
+      {user ? (
+        <div className="flex items-center gap-3">
+          <Link
+            href="/dashboard"
+            className="border border-[#cfcfcf] bg-white px-4 py-2 text-[12px] font-medium text-[#333] transition hover:border-[#999] hover:bg-[#fafafa]"
+          >
+            Dashboard
+          </Link>
+
+          <a
+            href="/api/auth/logout"
+            className="border border-[#cfcfcf] bg-white px-4 py-2 text-[12px] font-medium text-[#666] transition hover:border-[#999] hover:bg-[#fafafa]"
+          >
+            Logout
+          </a>
+
+          <div className="relative h-8 w-8 overflow-hidden rounded-full border border-[#ddd] bg-[#eee]">
+            {user.picture ? (
+              <Image
+                src={user.picture}
+                alt={user.name ?? "User"}
+                fill
+                sizes="32px"
+                className="object-cover"
+              />
+            ) : (
+              <div className="flex h-full w-full items-center justify-center text-[11px] font-medium text-[#666]">
+                {user.name?.charAt(0).toUpperCase() ?? "U"}
+              </div>
+            )}
+          </div>
+        </div>
+      ) : (
+        <Link
+          href="/auth/login"
+          className="border border-[#cfcfcf] bg-white px-4 py-2 text-[13px] font-medium text-[#333] transition hover:border-[#999] hover:bg-[#fafafa]"
+        >
+          Sign in
+        </Link>
+      )}
     </nav>
   );
 }
