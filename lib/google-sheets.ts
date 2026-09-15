@@ -2,9 +2,10 @@
 
 import { GoogleAuth } from 'google-auth-library';
 import { google, sheets_v4 } from 'googleapis';
-import { Application } from './types';
+import { Application, Note, RoleAnswers } from './types';
 
 const SCOPES = ['https://www.googleapis.com/auth/spreadsheets'];
+const NOTES_SHEET_NAME = 'Notes';
 
 async function getSheetsClient(): Promise<sheets_v4.Sheets> {
   const auth = new GoogleAuth({
@@ -49,7 +50,7 @@ function parseRow(header: string[], row: any[], sheetRowNumber: number): Applica
     get('Role Answers') ||
     '{}';
 
-  let roleAnswers: Record<string, string> = {};
+  let roleAnswers: RoleAnswers = {};
   try {
     roleAnswers = JSON.parse(rawRoleAnswers);
   } catch {
@@ -83,10 +84,9 @@ function parseRow(header: string[], row: any[], sheetRowNumber: number): Applica
     rowIndex: sheetRowNumber,
   };
 }
+
 /**
  * Updates the Status cell for a given sheet row.
- * @param rowIndex - 1-based row number in the sheet (header is row 1)
- * @param newStatus - The new status value to write
  */
 export async function updateApplicationStatus(
   rowIndex: number,
@@ -96,7 +96,6 @@ export async function updateApplicationStatus(
   const spreadsheetId = process.env.GOOGLE_SPREADSHEET_ID;
   const sheetName = process.env.GOOGLE_SHEET_NAME || 'Sheet1';
 
-  // Find the "Status" column by reading the header row
   const headerResponse = await sheets.spreadsheets.values.get({
     spreadsheetId,
     range: `${sheetName}!1:1`,
@@ -122,8 +121,76 @@ export async function updateApplicationStatus(
 }
 
 /**
+ * Fetches all notes for a given Application ID from the Notes sheet.
+ */
+export async function getNotesForApplication(applicationId: string): Promise<Note[]> {
+  const sheets = await getSheetsClient();
+  const spreadsheetId = process.env.GOOGLE_SPREADSHEET_ID;
+
+  const response = await sheets.spreadsheets.values.get({
+    spreadsheetId,
+    range: `${NOTES_SHEET_NAME}!A:D`,
+  });
+
+  const rows = response.data.values || [];
+  if (rows.length < 2) return [];
+
+  const [header, ...dataRows] = rows;
+
+  const notes: Note[] = [];
+  dataRows.forEach((row, index) => {
+    const note = parseNoteRow(header, row, index + 2);
+    if (note.applicationId === applicationId) {
+      notes.push(note);
+    }
+  });
+
+  return notes;
+}
+
+/**
+ * Appends a new note row to the Notes sheet.
+ */
+export async function addNote(
+  applicationId: string,
+  author: string,
+  note: string
+): Promise<Note> {
+  const sheets = await getSheetsClient();
+  const spreadsheetId = process.env.GOOGLE_SPREADSHEET_ID;
+  const timestamp = new Date().toISOString();
+
+  await sheets.spreadsheets.values.append({
+    spreadsheetId,
+    range: `${NOTES_SHEET_NAME}!A:D`,
+    valueInputOption: 'USER_ENTERED',
+    requestBody: {
+      values: [[timestamp, applicationId, author, note]],
+    },
+  });
+
+  return { timestamp, applicationId, author, note, rowIndex: 0 };
+}
+
+function parseNoteRow(header: string[], row: any[], sheetRowNumber: number): Note {
+  const get = (columnName: string): string => {
+    const colIndex = header.findIndex(
+      (h) => h?.toString().trim().toLowerCase() === columnName.toLowerCase()
+    );
+    return colIndex >= 0 ? (row[colIndex]?.toString() ?? '') : '';
+  };
+
+  return {
+    timestamp: get('Timestamp'),
+    applicationId: get('Application ID'),
+    author: get('Author'),
+    note: get('Note'),
+    rowIndex: sheetRowNumber,
+  };
+}
+
+/**
  * Converts a 0-based column index to its A1 notation letter.
- * 0 -> A, 25 -> Z, 26 -> AA, 27 -> AB, ...
  */
 function columnIndexToLetter(index: number): string {
   let letter = '';

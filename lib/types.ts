@@ -7,6 +7,19 @@ export type ApplicationStatus =
   | 'Selected'
   | 'Rejected';
 
+/**
+ * Role answers can contain any JSON-serializable value.
+ * Different roles can have completely different question types.
+ */
+export type RoleAnswerValue =
+  | string
+  | number
+  | boolean
+  | string[]
+  | null;
+
+export type RoleAnswers = Record<string, RoleAnswerValue>;
+
 export interface Application {
   applicationId: string;
   timestamp: string;
@@ -26,10 +39,18 @@ export interface Application {
   preferredRole: string;
   resumeUrl: string;
   resumeFileId: string;
-  roleAnswers: Record<string, string>;
+  roleAnswers: RoleAnswers;
   ipAddress: string;
   communities: string;
   achievement: string;
   whyJoin: string;
+  rowIndex: number;
+}
+
+export interface Note {
+  timestamp: string;
+  applicationId: string;
+  author: string;
+  note: string;
   rowIndex: number;
 }
