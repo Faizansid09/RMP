@@ -1,69 +1,41 @@
-import Image from "next/image";
+import Link from "next/link";
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <main className="relative min-h-screen overflow-hidden bg-slate-50 dark:bg-[#020617] p-6 text-slate-900 dark:text-white md:p-8 flex items-center justify-center">
+      {/* BACKGROUND GLOW */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="absolute -left-32 -top-32 h-96 w-96 rounded-full bg-blue-200/50 dark:bg-blue-600/10 blur-3xl" />
+        <div className="absolute right-[-100px] top-1/3 h-96 w-96 rounded-full bg-cyan-200/50 dark:bg-cyan-500/10 blur-3xl" />
+        <div className="absolute bottom-[-150px] left-1/3 h-96 w-96 rounded-full bg-indigo-200/50 dark:bg-indigo-600/10 blur-3xl" />
+      </div>
+
+      <div className="relative z-10 flex flex-col items-center text-center">
+        <div className="mb-6 flex items-center gap-3">
+          <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-emerald-500 dark:bg-emerald-400 shadow-[0_0_14px_rgba(52,211,153,0.8)]" />
+          <span className="text-sm font-medium tracking-wider text-emerald-700 dark:text-emerald-300">
+            SYSTEM ACTIVE
+          </span>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+
+        <h1 className="bg-gradient-to-r from-slate-900 via-blue-800 to-blue-600 dark:from-white dark:via-blue-100 dark:to-blue-400 bg-clip-text text-5xl font-bold tracking-tight text-transparent sm:text-7xl">
+          Recruitment Portal
+        </h1>
+        
+        <p className="mt-6 max-w-xl text-lg text-slate-500 dark:text-slate-400 leading-relaxed">
+          Manage applications, filter candidates, and streamline your entire recruitment workflow seamlessly.
+        </p>
+        
+        <Link 
+          href="/dashboard"
+          className="mt-10 inline-flex items-center justify-center rounded-xl border border-blue-200 dark:border-blue-400/20 bg-blue-50 dark:bg-blue-500/10 px-8 py-4 text-lg font-medium text-blue-700 dark:text-blue-200 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-blue-300 dark:hover:border-blue-400/40 hover:bg-blue-100 dark:hover:bg-blue-500/20 hover:shadow-[0_8px_25px_rgba(59,130,246,0.15)]"
+        >
+          Enter Dashboard
+          <svg className="ml-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+          </svg>
+        </Link>
+      </div>
+    </main>
   );
 }
