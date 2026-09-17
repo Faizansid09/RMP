@@ -1,28 +1,18 @@
 import { NextResponse } from 'next/server';
-import { getApplicationById } from '@/lib/google-sheets';
+import { getAllApplications } from '@/lib/google-sheets'; // Make sure this matches your lib file!
 
-export async function GET(
-  request: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(request: Request) {
   try {
-    const { id } = await params;
-    const application = await getApplicationById(id);
+    // This route gets ALL applications. No 'id' or 'params' needed here!
+    const applications = await getAllApplications(); 
 
-    if (!application) {
-      return NextResponse.json(
-        { success: false, error: 'Application not found' },
-        { status: 404 }
-      );
-    }
-
-    return NextResponse.json({ success: true, data: application });
+    return NextResponse.json({ success: true, data: applications });
   } catch (error) {
-    console.error('[GET /api/applications/[id]] Error:', error);
+    console.error('[GET /api/applications] Error:', error);
     return NextResponse.json(
       {
         success: false,
-        error: 'Failed to fetch application',
+        error: 'Failed to fetch applications',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }

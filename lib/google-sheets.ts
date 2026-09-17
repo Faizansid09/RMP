@@ -206,7 +206,7 @@ export async function getNotesForApplication(
     if (!cellValue) return;
 
     // Format: "<timestamp> | <author> | <note text>"
-    const parts = cellValue.split('|').map((p) => p.trim());
+    const parts = cellValue.split('|').map((p:any) => p.trim());
     if (parts.length < 3) return;
 
     const [timestamp, author, ...noteParts] = parts;
