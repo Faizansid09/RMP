@@ -1,16 +1,10 @@
-// app/api/applications/[id]/notes/route.ts
-
 import { NextResponse } from 'next/server';
 import {
-  getAllApplications,
+  getApplicationById,
   getNotesForApplication,
   addNote,
 } from '@/lib/google-sheets';
 
-/**
- * GET /api/applications/[id]/notes
- * Returns all notes for the given application.
- */
 export async function GET(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
@@ -18,9 +12,7 @@ export async function GET(
   try {
     const { id } = await params;
 
-    // Verify the application exists
-    const applications = await getAllApplications();
-    const application = applications.find((app) => app.applicationId === id);
+    const application = await getApplicationById(id);
     if (!application) {
       return NextResponse.json(
         { success: false, error: 'Application not found' },
@@ -48,11 +40,6 @@ export async function GET(
   }
 }
 
-/**
- * POST /api/applications/[id]/notes
- * Body: { author: string, note: string }
- * Appends a new note to the Notes sheet.
- */
 export async function POST(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
@@ -68,7 +55,6 @@ export async function POST(
         { status: 400 }
       );
     }
-
     if (!author || typeof author !== 'string' || author.trim().length === 0) {
       return NextResponse.json(
         { success: false, error: 'Author is required' },
@@ -76,9 +62,7 @@ export async function POST(
       );
     }
 
-    // Verify the application exists
-    const applications = await getAllApplications();
-    const application = applications.find((app) => app.applicationId === id);
+    const application = await getApplicationById(id);
     if (!application) {
       return NextResponse.json(
         { success: false, error: 'Application not found' },
@@ -89,11 +73,7 @@ export async function POST(
     const created = await addNote(id, author.trim(), note.trim());
 
     return NextResponse.json(
-      {
-        success: true,
-        message: 'Note added',
-        data: created,
-      },
+      { success: true, message: 'Note added', data: created },
       { status: 201 }
     );
   } catch (error) {
