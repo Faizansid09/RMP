@@ -1,25 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import {
-  useEffect,
-  useMemo,
-  useState,
-  type Dispatch,
-  type SetStateAction,
-} from "react";
-
-type ApiApplication = {
-  applicationId: string;
-  fullName: string;
-  registrationNumber: string;
-  universityEmail: string;
-  personalEmail: string;
-  preferredRole: string;
-  program: string;
-  branch: string;
-  status: string;
-};
+import { useEffect, useMemo, useState } from "react";
 
 type Application = {
   id: string;
@@ -32,6 +14,409 @@ type Application = {
   status: string;
 };
 
+const applications: Application[] = [
+  {
+    id: "APP001",
+    fullName: "Rahul Sharma",
+    registrationNumber: "12345678",
+    email: "rahul.sharma@example.com",
+    preferredRole: "Software Engineer",
+    program: "B.Tech",
+    branch: "CSE",
+    status: "Shortlisted",
+  },
+  {
+    id: "APP002",
+    fullName: "Priya Verma",
+    registrationNumber: "12345679",
+    email: "priya.verma@example.com",
+    preferredRole: "Data Analyst",
+    program: "B.Tech",
+    branch: "IT",
+    status: "Selected",
+  },
+  {
+    id: "APP003",
+    fullName: "Aman Kumar",
+    registrationNumber: "12345680",
+    email: "aman.kumar@example.com",
+    preferredRole: "Web Developer",
+    program: "BCA",
+    branch: "CSE",
+    status: "Pending",
+  },
+  {
+    id: "APP004",
+    fullName: "Sneha Gupta",
+    registrationNumber: "12345681",
+    email: "sneha.gupta@example.com",
+    preferredRole: "UI/UX Designer",
+    program: "B.Des",
+    branch: "Design",
+    status: "Rejected",
+  },
+  {
+    id: "APP005",
+    fullName: "Arjun Singh",
+    registrationNumber: "12345682",
+    email: "arjun.singh@example.com",
+    preferredRole: "Cloud Engineer",
+    program: "B.Tech",
+    branch: "CSE",
+    status: "Shortlisted",
+  },
+  {
+    id: "APP006",
+    fullName: "Ananya Mehta",
+    registrationNumber: "12345683",
+    email: "ananya.mehta@example.com",
+    preferredRole: "DevOps Engineer",
+    program: "B.Tech",
+    branch: "IT",
+    status: "Selected",
+  },
+  {
+    id: "APP007",
+    fullName: "Rohan Patel",
+    registrationNumber: "12345684",
+    email: "rohan.patel@example.com",
+    preferredRole: "Software Engineer",
+    program: "B.Tech",
+    branch: "ECE",
+    status: "Pending",
+  },
+  {
+    id: "APP008",
+    fullName: "Neha Joshi",
+    registrationNumber: "12345685",
+    email: "neha.joshi@example.com",
+    preferredRole: "Data Analyst",
+    program: "BCA",
+    branch: "IT",
+    status: "Shortlisted",
+  },
+  {
+    id: "APP009",
+    fullName: "Vivek Agarwal",
+    registrationNumber: "12345686",
+    email: "vivek.agarwal@example.com",
+    preferredRole: "Web Developer",
+    program: "B.Tech",
+    branch: "CSE",
+    status: "Rejected",
+  },
+  {
+    id: "APP010",
+    fullName: "Kavya Sharma",
+    registrationNumber: "12345687",
+    email: "kavya.sharma@example.com",
+    preferredRole: "UI/UX Designer",
+    program: "B.Des",
+    branch: "Design",
+    status: "Selected",
+  },
+  {
+    id: "APP011",
+    fullName: "Aditya Verma",
+    registrationNumber: "12345688",
+    email: "aditya.verma@example.com",
+    preferredRole: "Cloud Engineer",
+    program: "B.Tech",
+    branch: "CSE",
+    status: "Pending",
+  },
+  {
+    id: "APP012",
+    fullName: "Simran Kaur",
+    registrationNumber: "12345689",
+    email: "simran.kaur@example.com",
+    preferredRole: "DevOps Engineer",
+    program: "B.Tech",
+    branch: "IT",
+    status: "Shortlisted",
+  },
+  {
+    id: "APP013",
+    fullName: "Karan Malhotra",
+    registrationNumber: "12345690",
+    email: "karan.malhotra@example.com",
+    preferredRole: "Software Engineer",
+    program: "BCA",
+    branch: "CSE",
+    status: "Selected",
+  },
+  {
+    id: "APP014",
+    fullName: "Isha Kapoor",
+    registrationNumber: "12345691",
+    email: "isha.kapoor@example.com",
+    preferredRole: "Data Analyst",
+    program: "B.Tech",
+    branch: "IT",
+    status: "Pending",
+  },
+  {
+    id: "APP015",
+    fullName: "Yash Thakur",
+    registrationNumber: "12345692",
+    email: "yash.thakur@example.com",
+    preferredRole: "Web Developer",
+    program: "B.Tech",
+    branch: "ECE",
+    status: "Shortlisted",
+  },
+  {
+    id: "APP016",
+    fullName: "Muskan Jain",
+    registrationNumber: "12345693",
+    email: "muskan.jain@example.com",
+    preferredRole: "UI/UX Designer",
+    program: "B.Des",
+    branch: "Design",
+    status: "Rejected",
+  },
+  {
+    id: "APP017",
+    fullName: "Harsh Gupta",
+    registrationNumber: "12345694",
+    email: "harsh.gupta@example.com",
+    preferredRole: "Cloud Engineer",
+    program: "B.Tech",
+    branch: "CSE",
+    status: "Selected",
+  },
+  {
+    id: "APP018",
+    fullName: "Pooja Sharma",
+    registrationNumber: "12345695",
+    email: "pooja.sharma@example.com",
+    preferredRole: "DevOps Engineer",
+    program: "B.Tech",
+    branch: "IT",
+    status: "Pending",
+  },
+  {
+    id: "APP019",
+    fullName: "Nikhil Kumar",
+    registrationNumber: "12345696",
+    email: "nikhil.kumar@example.com",
+    preferredRole: "Software Engineer",
+    program: "BCA",
+    branch: "CSE",
+    status: "Shortlisted",
+  },
+  {
+    id: "APP020",
+    fullName: "Riya Singh",
+    registrationNumber: "12345697",
+    email: "riya.singh@example.com",
+    preferredRole: "Data Analyst",
+    program: "B.Tech",
+    branch: "IT",
+    status: "Selected",
+  },
+  {
+    id: "APP021",
+    fullName: "Mohit Bansal",
+    registrationNumber: "12345698",
+    email: "mohit.bansal@example.com",
+    preferredRole: "Web Developer",
+    program: "B.Tech",
+    branch: "CSE",
+    status: "Pending",
+  },
+  {
+    id: "APP022",
+    fullName: "Aditi Sharma",
+    registrationNumber: "12345699",
+    email: "aditi.sharma@example.com",
+    preferredRole: "UI/UX Designer",
+    program: "B.Des",
+    branch: "Design",
+    status: "Shortlisted",
+  },
+  {
+    id: "APP023",
+    fullName: "Saurabh Mishra",
+    registrationNumber: "12345700",
+    email: "saurabh.mishra@example.com",
+    preferredRole: "Cloud Engineer",
+    program: "B.Tech",
+    branch: "ECE",
+    status: "Rejected",
+  },
+  {
+    id: "APP024",
+    fullName: "Tanya Arora",
+    registrationNumber: "12345701",
+    email: "tanya.arora@example.com",
+    preferredRole: "DevOps Engineer",
+    program: "B.Tech",
+    branch: "IT",
+    status: "Selected",
+  },
+  {
+    id: "APP025",
+    fullName: "Deepak Rawat",
+    registrationNumber: "12345702",
+    email: "deepak.rawat@example.com",
+    preferredRole: "Software Engineer",
+    program: "B.Tech",
+    branch: "CSE",
+    status: "Pending",
+  },
+  {
+    id: "APP026",
+    fullName: "Shreya Gupta",
+    registrationNumber: "12345703",
+    email: "shreya.gupta@example.com",
+    preferredRole: "Data Analyst",
+    program: "BCA",
+    branch: "IT",
+    status: "Shortlisted",
+  },
+  {
+    id: "APP027",
+    fullName: "Manish Yadav",
+    registrationNumber: "12345704",
+    email: "manish.yadav@example.com",
+    preferredRole: "Web Developer",
+    program: "B.Tech",
+    branch: "CSE",
+    status: "Selected",
+  },
+  {
+    id: "APP028",
+    fullName: "Nandini Rao",
+    registrationNumber: "12345705",
+    email: "nandini.rao@example.com",
+    preferredRole: "UI/UX Designer",
+    program: "B.Des",
+    branch: "Design",
+    status: "Pending",
+  },
+  {
+    id: "APP029",
+    fullName: "Akash Tiwari",
+    registrationNumber: "12345706",
+    email: "akash.tiwari@example.com",
+    preferredRole: "Cloud Engineer",
+    program: "B.Tech",
+    branch: "CSE",
+    status: "Shortlisted",
+  },
+  {
+    id: "APP030",
+    fullName: "Megha Saini",
+    registrationNumber: "12345707",
+    email: "megha.saini@example.com",
+    preferredRole: "DevOps Engineer",
+    program: "B.Tech",
+    branch: "IT",
+    status: "Rejected",
+  },
+  {
+    id: "APP031",
+    fullName: "Varun Kapoor",
+    registrationNumber: "12345708",
+    email: "varun.kapoor@example.com",
+    preferredRole: "Software Engineer",
+    program: "BCA",
+    branch: "CSE",
+    status: "Selected",
+  },
+  {
+    id: "APP032",
+    fullName: "Shivani Gupta",
+    registrationNumber: "12345709",
+    email: "shivani.gupta@example.com",
+    preferredRole: "Data Analyst",
+    program: "B.Tech",
+    branch: "IT",
+    status: "Pending",
+  },
+  {
+    id: "APP033",
+    fullName: "Raj Mehta",
+    registrationNumber: "12345710",
+    email: "raj.mehta@example.com",
+    preferredRole: "Web Developer",
+    program: "B.Tech",
+    branch: "ECE",
+    status: "Shortlisted",
+  },
+  {
+    id: "APP034",
+    fullName: "Sakshi Verma",
+    registrationNumber: "12345711",
+    email: "sakshi.verma@example.com",
+    preferredRole: "UI/UX Designer",
+    program: "B.Des",
+    branch: "Design",
+    status: "Selected",
+  },
+  {
+    id: "APP035",
+    fullName: "Abhishek Singh",
+    registrationNumber: "12345712",
+    email: "abhishek.singh@example.com",
+    preferredRole: "Cloud Engineer",
+    program: "B.Tech",
+    branch: "CSE",
+    status: "Pending",
+  },
+  {
+    id: "APP036",
+    fullName: "Komal Sharma",
+    registrationNumber: "12345713",
+    email: "komal.sharma@example.com",
+    preferredRole: "DevOps Engineer",
+    program: "B.Tech",
+    branch: "IT",
+    status: "Shortlisted",
+  },
+  {
+    id: "APP037",
+    fullName: "Rishabh Jain",
+    registrationNumber: "12345714",
+    email: "rishabh.jain@example.com",
+    preferredRole: "Software Engineer",
+    program: "BCA",
+    branch: "CSE",
+    status: "Rejected",
+  },
+  {
+    id: "APP038",
+    fullName: "Pallavi Joshi",
+    registrationNumber: "12345715",
+    email: "pallavi.joshi@example.com",
+    preferredRole: "Data Analyst",
+    program: "B.Tech",
+    branch: "IT",
+    status: "Selected",
+  },
+  {
+    id: "APP039",
+    fullName: "Abhinav Kumar",
+    registrationNumber: "12345716",
+    email: "abhinav.kumar@example.com",
+    preferredRole: "Web Developer",
+    program: "B.Tech",
+    branch: "CSE",
+    status: "Pending",
+  },
+  {
+    id: "APP040",
+    fullName: "Divya Agarwal",
+    registrationNumber: "12345717",
+    email: "divya.agarwal@example.com",
+    preferredRole: "UI/UX Designer",
+    program: "B.Des",
+    branch: "Design",
+    status: "Shortlisted",
+  },
+];
+
 const statuses = [
   "Pending",
   "Shortlisted",
@@ -39,6 +424,19 @@ const statuses = [
   "Selected",
   "Rejected",
 ];
+
+const roles = [
+  "Cloud Engineer",
+  "Web Developer",
+  "Data Analyst",
+  "Software Engineer",
+  "UI/UX Designer",
+  "DevOps Engineer",
+];
+
+const programs = ["B.Tech", "BCA", "B.Des"];
+
+const branches = ["CSE", "IT", "ECE", "Design"];
 
 type SortField =
   | "id"
@@ -48,21 +446,7 @@ type SortField =
   | "branch"
   | "status";
 
-const validSortFields: SortField[] = [
-  "id",
-  "fullName",
-  "preferredRole",
-  "program",
-  "branch",
-  "status",
-];
-
 export default function Dashboard() {
-  const [applications, setApplications] = useState<Application[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [reloadKey, setReloadKey] = useState(0);
-
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
 
@@ -75,230 +459,8 @@ export default function Dashboard() {
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
 
   const [showFilters, setShowFilters] = useState(false);
-  const [urlInitialized, setUrlInitialized] = useState(false);
 
-  /* ============================================================
-     LOAD APPLICATIONS FROM API
-  ============================================================ */
-
-  useEffect(() => {
-    let cancelled = false;
-
-    const loadApplications = async () => {
-      try {
-        setLoading(true);
-        setError("");
-
-        const response = await fetch("/api/applications", {
-          cache: "no-store",
-        });
-
-        const result = await response.json();
-
-        if (!response.ok || !result.success) {
-          throw new Error(
-            result.error || "Failed to fetch applications"
-          );
-        }
-
-        const apiApplications: ApiApplication[] = result.data || [];
-
-        const mappedApplications: Application[] = apiApplications
-          .filter((application) => application.applicationId)
-          .map((application) => ({
-            id: application.applicationId,
-            fullName: application.fullName || "N/A",
-            registrationNumber:
-              application.registrationNumber || "N/A",
-            email:
-              application.universityEmail ||
-              application.personalEmail ||
-              "N/A",
-            preferredRole: application.preferredRole || "N/A",
-            program: application.program || "N/A",
-            branch: application.branch || "N/A",
-            status: application.status || "Pending",
-          }));
-
-        if (!cancelled) {
-          setApplications(mappedApplications);
-        }
-      } catch (err) {
-        if (!cancelled) {
-          setError(
-            err instanceof Error
-              ? err.message
-              : "Unable to load applications"
-          );
-          setApplications([]);
-        }
-      } finally {
-        if (!cancelled) {
-          setLoading(false);
-        }
-      }
-    };
-
-    loadApplications();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [reloadKey]);
-
-  /* ============================================================
-     RESTORE DASHBOARD STATE FROM URL
-  ============================================================ */
-
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-
-    const query = params.get("q") || "";
-    const statusesFromUrl = params.get("status");
-    const rolesFromUrl = params.get("role");
-    const programsFromUrl = params.get("program");
-    const branchesFromUrl = params.get("branch");
-    const sortFromUrl = params.get("sort");
-    const directionFromUrl = params.get("direction");
-
-    setSearch(query);
-    setDebouncedSearch(query);
-
-    setSelectedStatuses(
-      statusesFromUrl
-        ? statusesFromUrl.split(",").filter(Boolean)
-        : []
-    );
-
-    setSelectedRoles(
-      rolesFromUrl
-        ? rolesFromUrl.split(",").filter(Boolean)
-        : []
-    );
-
-    setSelectedPrograms(
-      programsFromUrl
-        ? programsFromUrl.split(",").filter(Boolean)
-        : []
-    );
-
-    setSelectedBranches(
-      branchesFromUrl
-        ? branchesFromUrl.split(",").filter(Boolean)
-        : []
-    );
-
-    if (
-      sortFromUrl &&
-      validSortFields.includes(sortFromUrl as SortField)
-    ) {
-      setSortField(sortFromUrl as SortField);
-    }
-
-    if (
-      directionFromUrl === "asc" ||
-      directionFromUrl === "desc"
-    ) {
-      setSortDirection(directionFromUrl);
-    }
-
-    setUrlInitialized(true);
-  }, []);
-
-  /* ============================================================
-     KEEP URL IN SYNC
-  ============================================================ */
-
-  useEffect(() => {
-    if (!urlInitialized) return;
-
-    const params = new URLSearchParams();
-
-    if (search.trim()) {
-      params.set("q", search.trim());
-    }
-
-    if (selectedStatuses.length > 0) {
-      params.set("status", selectedStatuses.join(","));
-    }
-
-    if (selectedRoles.length > 0) {
-      params.set("role", selectedRoles.join(","));
-    }
-
-    if (selectedPrograms.length > 0) {
-      params.set("program", selectedPrograms.join(","));
-    }
-
-    if (selectedBranches.length > 0) {
-      params.set("branch", selectedBranches.join(","));
-    }
-
-    params.set("sort", sortField);
-    params.set("direction", sortDirection);
-
-    const queryString = params.toString();
-
-    const newUrl = queryString
-      ? `/dashboard?${queryString}`
-      : "/dashboard";
-
-    window.history.replaceState(null, "", newUrl);
-  }, [
-    urlInitialized,
-    search,
-    selectedStatuses,
-    selectedRoles,
-    selectedPrograms,
-    selectedBranches,
-    sortField,
-    sortDirection,
-  ]);
-
-  /* ============================================================
-     FILTER OPTIONS
-  ============================================================ */
-
-  const roles = useMemo(
-    () =>
-      Array.from(
-        new Set(
-          applications
-            .map((application) => application.preferredRole)
-            .filter(Boolean)
-        )
-      ).sort(),
-    [applications]
-  );
-
-  const programs = useMemo(
-    () =>
-      Array.from(
-        new Set(
-          applications
-            .map((application) => application.program)
-            .filter(Boolean)
-        )
-      ).sort(),
-    [applications]
-  );
-
-  const branches = useMemo(
-    () =>
-      Array.from(
-        new Set(
-          applications
-            .map((application) => application.branch)
-            .filter(Boolean)
-        )
-      ).sort(),
-    [applications]
-  );
-
-  /* ============================================================
-     DEBOUNCED SEARCH
-  ============================================================ */
-
+  /* Debounced Search */
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearch(search);
@@ -307,14 +469,11 @@ export default function Dashboard() {
     return () => clearTimeout(timer);
   }, [search]);
 
-  /* ============================================================
-     TOGGLE FILTER
-  ============================================================ */
-
+  /* Toggle Filter */
   const toggleFilter = (
     value: string,
     selected: string[],
-    setter: Dispatch<SetStateAction<string[]>>
+    setter: React.Dispatch<React.SetStateAction<string[]>>
   ) => {
     if (selected.includes(value)) {
       setter(selected.filter((item) => item !== value));
@@ -323,10 +482,7 @@ export default function Dashboard() {
     }
   };
 
-  /* ============================================================
-     CLEAR ALL FILTERS
-  ============================================================ */
-
+  /* Clear All */
   const clearAllFilters = () => {
     setSearch("");
     setDebouncedSearch("");
@@ -336,10 +492,7 @@ export default function Dashboard() {
     setSelectedBranches([]);
   };
 
-  /* ============================================================
-     SORTING
-  ============================================================ */
-
+  /* Sorting */
   const handleSort = (field: SortField) => {
     if (sortField === field) {
       setSortDirection((current) =>
@@ -351,10 +504,7 @@ export default function Dashboard() {
     }
   };
 
-  /* ============================================================
-     FILTER + SEARCH + SORT
-  ============================================================ */
-
+  /* Filter + Search + Sort */
   const filteredApplications = useMemo(() => {
     const query = debouncedSearch.trim().toLowerCase();
 
@@ -363,9 +513,7 @@ export default function Dashboard() {
         query === "" ||
         application.id.toLowerCase().includes(query) ||
         application.fullName.toLowerCase().includes(query) ||
-        application.registrationNumber
-          .toLowerCase()
-          .includes(query) ||
+        application.registrationNumber.toLowerCase().includes(query) ||
         application.email.toLowerCase().includes(query) ||
         application.preferredRole.toLowerCase().includes(query) ||
         application.program.toLowerCase().includes(query) ||
@@ -401,22 +549,15 @@ export default function Dashboard() {
       const valueA = a[sortField].toLowerCase();
       const valueB = b[sortField].toLowerCase();
 
-      const comparison = valueA.localeCompare(
-        valueB,
-        undefined,
-        {
-          numeric: true,
-        }
-      );
+      const comparison = valueA.localeCompare(valueB, undefined, {
+        numeric: true,
+      });
 
-      return sortDirection === "asc"
-        ? comparison
-        : -comparison;
+      return sortDirection === "asc" ? comparison : -comparison;
     });
 
     return filtered;
   }, [
-    applications,
     debouncedSearch,
     selectedStatuses,
     selectedRoles,
@@ -426,20 +567,14 @@ export default function Dashboard() {
     sortDirection,
   ]);
 
-  /* ============================================================
-     ACTIVE FILTER COUNT
-  ============================================================ */
-
+  /* Active filter count */
   const activeFilterCount =
     selectedStatuses.length +
     selectedRoles.length +
     selectedPrograms.length +
     selectedBranches.length;
 
-  /* ============================================================
-     APPLICANT URL
-  ============================================================ */
-
+  /* Applicant URL */
   const createApplicantLink = (id: string) => {
     const params = new URLSearchParams();
 
@@ -466,49 +601,48 @@ export default function Dashboard() {
     params.set("sort", sortField);
     params.set("direction", sortDirection);
 
-    const queryString = params.toString();
-
-    return queryString
-      ? `/applications/${encodeURIComponent(
-          id
-        )}?${queryString}`
-      : `/applications/${encodeURIComponent(id)}`;
+    return `/applications/${id}?${params.toString()}`;
   };
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-[#020617] p-6 text-white md:p-8">
+    <main className="relative min-h-screen overflow-hidden bg-[#020617] text-white p-6 md:p-8">
 
-      {/* ========================================================
+      {/* ================================
           BACKGROUND GLOW
-      ======================================================== */}
+      ================================= */}
 
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
+
         <div className="absolute -left-32 -top-32 h-96 w-96 rounded-full bg-blue-600/10 blur-3xl" />
 
         <div className="absolute right-[-100px] top-1/3 h-96 w-96 rounded-full bg-cyan-500/10 blur-3xl" />
 
         <div className="absolute bottom-[-150px] left-1/3 h-96 w-96 rounded-full bg-indigo-600/10 blur-3xl" />
+
       </div>
 
-      {/* ========================================================
+      {/* ================================
           MAIN CONTENT
-      ======================================================== */}
+      ================================= */}
 
       <div className="relative z-10 mx-auto max-w-7xl">
 
-        {/* ======================================================
+        {/* ================================
             HEADER
-        ====================================================== */}
+        ================================= */}
 
         <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
 
           <div>
+
             <div className="mb-3 flex items-center gap-3">
+
               <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-emerald-400 shadow-[0_0_14px_rgba(52,211,153,0.8)]" />
 
               <span className="text-sm font-medium tracking-wider text-emerald-300">
                 RECRUITMENT PORTAL • LIVE
               </span>
+
             </div>
 
             <h1 className="bg-gradient-to-r from-white via-blue-100 to-blue-400 bg-clip-text text-3xl font-bold text-transparent md:text-5xl">
@@ -518,17 +652,21 @@ export default function Dashboard() {
             <p className="mt-3 text-slate-400">
               Search, filter and manage recruitment applications
             </p>
+
           </div>
 
           <div className="w-fit rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-slate-300 backdrop-blur-xl">
+
             <span className="text-blue-400">●</span>{" "}
             System Active
+
           </div>
+
         </div>
 
-        {/* ======================================================
+        {/* ================================
             STATISTICS
-        ====================================================== */}
+        ================================= */}
 
         <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
 
@@ -577,30 +715,30 @@ export default function Dashboard() {
 
         </div>
 
-        {/* ======================================================
+        {/* ================================
             SEARCH + FILTERS
-        ====================================================== */}
+        ================================= */}
 
         <div className="group relative mb-6 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.045] p-5 shadow-[0_20px_60px_rgba(0,0,0,0.2)] backdrop-blur-2xl">
 
+          {/* Glossy top edge */}
           <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent" />
 
           <div className="flex flex-col gap-4 lg:flex-row">
 
             {/* Search */}
-
             <div className="flex-1">
+
               <label className="mb-2 block text-sm text-slate-400">
                 Search Applications
               </label>
 
               <div className="relative">
+
                 <input
                   type="text"
                   value={search}
-                  onChange={(e) =>
-                    setSearch(e.target.value)
-                  }
+                  onChange={(e) => setSearch(e.target.value)}
                   placeholder="Search by name, application ID, registration number or email..."
                   className="w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3.5 text-white placeholder-slate-500 outline-none backdrop-blur-xl transition-all duration-300 focus:border-blue-400/50 focus:bg-black/30 focus:ring-4 focus:ring-blue-500/10"
                 />
@@ -610,17 +748,17 @@ export default function Dashboard() {
                     Searching...
                   </span>
                 )}
+
               </div>
+
             </div>
 
             {/* Filters */}
-
             <div className="flex items-end">
+
               <button
                 type="button"
-                onClick={() =>
-                  setShowFilters(!showFilters)
-                }
+                onClick={() => setShowFilters(!showFilters)}
                 className="rounded-xl border border-blue-400/20 bg-blue-500/10 px-5 py-3.5 text-blue-200 backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:border-blue-400/40 hover:bg-blue-500/20 hover:shadow-[0_8px_25px_rgba(59,130,246,0.15)]"
               >
                 Filters
@@ -631,11 +769,12 @@ export default function Dashboard() {
                   </span>
                 )}
               </button>
+
             </div>
 
             {/* Clear */}
-
             <div className="flex items-end">
+
               <button
                 type="button"
                 onClick={clearAllFilters}
@@ -643,12 +782,14 @@ export default function Dashboard() {
               >
                 Clear All
               </button>
+
             </div>
+
           </div>
 
-          {/* ====================================================
+          {/* ================================
               FILTER OPTIONS
-          ==================================================== */}
+          ================================= */}
 
           {showFilters && (
             <div className="mt-6 grid grid-cols-1 gap-6 border-t border-white/10 pt-6 md:grid-cols-2 lg:grid-cols-4">
@@ -708,9 +849,9 @@ export default function Dashboard() {
             </div>
           )}
 
-          {/* ====================================================
+          {/* ================================
               ACTIVE FILTER CHIPS
-          ==================================================== */}
+          ================================= */}
 
           {activeFilterCount > 0 && (
             <div className="mt-5 flex flex-wrap gap-2 border-t border-white/10 pt-5">
@@ -773,41 +914,12 @@ export default function Dashboard() {
 
             </div>
           )}
+
         </div>
 
-        {/* ======================================================
-            ERROR
-        ====================================================== */}
-
-        {error && (
-          <div className="mb-6 flex items-center justify-between gap-4 rounded-2xl border border-red-400/20 bg-red-500/10 px-5 py-4 text-sm text-red-300 backdrop-blur-xl">
-
-            <div>
-              <p className="font-semibold">
-                Failed to load applications
-              </p>
-
-              <p className="mt-1 text-red-300/70">
-                {error}
-              </p>
-            </div>
-
-            <button
-              type="button"
-              onClick={() =>
-                setReloadKey((value) => value + 1)
-              }
-              className="shrink-0 rounded-lg border border-red-400/20 bg-red-500/10 px-4 py-2 font-medium text-red-200 transition hover:bg-red-500/20"
-            >
-              Retry
-            </button>
-
-          </div>
-        )}
-
-        {/* ======================================================
+        {/* ================================
             RESULTS
-        ====================================================== */}
+        ================================= */}
 
         <div className="mb-4 flex items-center justify-between">
 
@@ -834,12 +946,13 @@ export default function Dashboard() {
 
         </div>
 
-        {/* ======================================================
+        {/* ================================
             TABLE
-        ====================================================== */}
+        ================================= */}
 
         <div className="relative overflow-x-auto rounded-2xl border border-white/10 bg-white/[0.035] shadow-[0_20px_70px_rgba(0,0,0,0.25)] backdrop-blur-2xl">
 
+          {/* Glossy table top */}
           <div className="pointer-events-none absolute inset-x-0 top-0 z-10 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent" />
 
           <table className="w-full min-w-[1150px] text-left">
@@ -910,31 +1023,10 @@ export default function Dashboard() {
 
             <tbody className="divide-y divide-white/[0.06]">
 
-              {/* Loading */}
-
-              {loading ? (
-                <tr>
-                  <td
-                    colSpan={8}
-                    className="px-6 py-16 text-center"
-                  >
-                    <div className="flex flex-col items-center">
-
-                      <div className="mb-4 h-10 w-10 animate-spin rounded-full border-2 border-white/10 border-t-blue-400" />
-
-                      <p className="text-sm text-slate-400">
-                        Loading applications...
-                      </p>
-
-                    </div>
-                  </td>
-                </tr>
-
-              ) : filteredApplications.length === 0 ? (
-
-                /* No Results */
+              {filteredApplications.length === 0 ? (
 
                 <tr>
+
                   <td
                     colSpan={8}
                     className="px-6 py-16 text-center"
@@ -965,11 +1057,10 @@ export default function Dashboard() {
                     </div>
 
                   </td>
+
                 </tr>
 
               ) : (
-
-                /* Applications */
 
                 filteredApplications.map((application) => (
 
@@ -979,17 +1070,13 @@ export default function Dashboard() {
                   >
 
                     {/* Application ID */}
-
                     <td className="px-4 py-4 font-medium">
 
                       <Link
-                        href={createApplicantLink(
-                          application.id
-                        )}
+                        href={createApplicantLink(application.id)}
                         className="inline-flex items-center gap-1 font-medium text-blue-400 transition-all duration-200 group-hover:text-blue-300 hover:translate-x-0.5 hover:underline"
                       >
                         {application.id}
-
                         <span className="text-xs opacity-0 transition-opacity group-hover:opacity-100">
                           →
                         </span>
@@ -998,13 +1085,10 @@ export default function Dashboard() {
                     </td>
 
                     {/* Candidate */}
-
                     <td className="px-4 py-4 font-medium">
 
                       <Link
-                        href={createApplicantLink(
-                          application.id
-                        )}
+                        href={createApplicantLink(application.id)}
                         className="text-white transition-colors duration-200 group-hover:text-blue-300 hover:underline"
                       >
                         {application.fullName}
@@ -1013,13 +1097,10 @@ export default function Dashboard() {
                     </td>
 
                     {/* Registration Number */}
-
                     <td className="px-4 py-4">
 
                       <Link
-                        href={createApplicantLink(
-                          application.id
-                        )}
+                        href={createApplicantLink(application.id)}
                         className="font-medium text-blue-400 transition-all duration-200 hover:text-blue-300 hover:underline"
                       >
                         {application.registrationNumber}
@@ -1028,35 +1109,28 @@ export default function Dashboard() {
                     </td>
 
                     {/* Email */}
-
                     <td className="px-4 py-4 text-slate-400">
                       {application.email}
                     </td>
 
                     {/* Role */}
-
                     <td className="px-4 py-4 text-slate-300">
                       {application.preferredRole}
                     </td>
 
                     {/* Program */}
-
                     <td className="px-4 py-4 text-slate-300">
                       {application.program}
                     </td>
 
                     {/* Branch */}
-
                     <td className="px-4 py-4 text-slate-300">
                       {application.branch}
                     </td>
 
                     {/* Status */}
-
                     <td className="px-4 py-4">
-                      <StatusBadge
-                        status={application.status}
-                      />
+                      <StatusBadge status={application.status} />
                     </td>
 
                   </tr>
@@ -1071,15 +1145,11 @@ export default function Dashboard() {
 
         </div>
 
-        {/* ======================================================
-            FOOTER
-        ====================================================== */}
-
+        {/* Footer note */}
         <div className="mt-4 flex flex-col gap-2 text-xs text-slate-500 sm:flex-row sm:items-center sm:justify-between">
 
           <p>
-            Click an Application ID, candidate name, or
-            registration number to view details.
+            Click an Application ID, candidate name, or registration number to view details.
           </p>
 
           <p>
@@ -1121,6 +1191,7 @@ function StatCard({
   return (
     <div className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.045] p-5 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-blue-400/30 hover:bg-white/[0.07] hover:shadow-[0_15px_50px_rgba(0,0,0,0.25)]">
 
+      {/* Glossy light */}
       <div className="pointer-events-none absolute -right-10 -top-10 h-28 w-28 rounded-full bg-white/10 blur-2xl transition-all duration-500 group-hover:bg-blue-400/10" />
 
       <div className="relative flex items-start justify-between">
@@ -1147,6 +1218,7 @@ function StatCard({
 
       </div>
 
+      {/* Bottom shine */}
       <div className="absolute bottom-0 left-0 h-px w-full bg-gradient-to-r from-transparent via-blue-400/50 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
     </div>
@@ -1330,11 +1402,13 @@ function StatusBadge({
     <span
       className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-medium backdrop-blur-md ${className}`}
     >
+
       <span
         className={`h-1.5 w-1.5 rounded-full ${dotClass}`}
       />
 
       {status}
+
     </span>
   );
 }
