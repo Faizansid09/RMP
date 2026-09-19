@@ -167,10 +167,6 @@ export async function updateApplicationStatus(
 }
 
 /**
- * Fetch all notes for a given Application ID.
- * Notes sheet is append-only (multiple rows per app), so we scan the Notes
- * sheet and filter. This is acceptable because the Notes sheet is small.
-/**
  * Fetches all notes for an application by reading only that row
  * and extracting every "Note N" column that has a value.
  */
@@ -206,7 +202,7 @@ export async function getNotesForApplication(
     if (!cellValue) return;
 
     // Format: "<timestamp> | <author> | <note text>"
-    const parts = cellValue.split('|').map((p:any) => p.trim());
+    const parts = cellValue.split('|').map((p: any) => p.trim());
     if (parts.length < 3) return;
 
     const [timestamp, author, ...noteParts] = parts;
@@ -222,9 +218,6 @@ export async function getNotesForApplication(
   return notes;
 }
 
-/**
- * Appends a new note. Append-only by design — preserves history.
- */
 /**
  * Appends a note to the first empty "Note N" column on the application's row.
  */
@@ -289,22 +282,6 @@ export async function addNote(
   });
 
   return { timestamp, applicationId, author, note, rowIndex: rowNumber };
-}
-
-function parseNoteRow(header: string[], row: any[], sheetRowNumber: number): Note {
-  const get = (columnName: string): string => {
-    const colIndex = header.findIndex(
-      (h) => h?.toString().trim().toLowerCase() === columnName.toLowerCase()
-    );
-    return colIndex >= 0 ? (row[colIndex]?.toString() ?? '') : '';
-  };
-  return {
-    timestamp: get('Timestamp'),
-    applicationId: get('Application ID'),
-    author: get('Author'),
-    note: get('Note'),
-    rowIndex: sheetRowNumber,
-  };
 }
 
 function columnIndexToLetter(index: number): string {
