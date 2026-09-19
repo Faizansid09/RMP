@@ -1,31 +1,63 @@
 import { NextResponse } from 'next/server';
 import { getApplicationById } from '@/lib/google-sheets';
 
+type RouteContext = {
+  params: Promise<{
+    id: string;
+  }>;
+};
+
 export async function GET(
   request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  context: RouteContext
 ) {
   try {
-    const { id } = await params;
+    const { id } = await context.params;
+
+    if (!id) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Application ID is required',
+        },
+        {
+          status: 400,
+        }
+      );
+    }
+
     const application = await getApplicationById(id);
 
     if (!application) {
       return NextResponse.json(
-        { success: false, error: 'Application not found' },
-        { status: 404 }
+        {
+          success: false,
+          error: 'Application not found',
+        },
+        {
+          status: 404,
+        }
       );
     }
 
-    return NextResponse.json({ success: true, data: application });
+    return NextResponse.json({
+      success: true,
+      application,
+    });
   } catch (error) {
-    console.error('[GET /api/applications/[id]] Error:', error);
+    console.error(
+      'GET /api/applications/[id] error:',
+      error
+    );
+
     return NextResponse.json(
       {
         success: false,
         error: 'Failed to fetch application',
-        details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      {
+        status: 500,
+      }
     );
   }
 }

@@ -4,8 +4,9 @@ import { GoogleAuth } from 'google-auth-library';
 import { google, sheets_v4 } from 'googleapis';
 import { Application, Note, RoleAnswers } from './types';
 
-const SCOPES = ['https://www.googleapis.com/auth/spreadsheets'];
-const NOTES_SHEET_NAME = 'Notes';
+const SCOPES = [
+  'https://www.googleapis.com/auth/spreadsheets',
+];
 
 async function getSheetsClient(): Promise<sheets_v4.Sheets> {
   const auth = new GoogleAuth({
@@ -15,41 +16,53 @@ async function getSheetsClient(): Promise<sheets_v4.Sheets> {
     },
     scopes: SCOPES,
   });
-  return google.sheets({ version: 'v4', auth });
+
+  return google.sheets({
+    version: 'v4',
+    auth,
+  });
 }
 
 /**
- * Maps an Application ID to its 1-based row number in the Applications sheet.
+ * Maps an Application ID to its 1-based row number.
  *
- * Examples (actual format on our sheet):
- *   AWS-2026-DEMO-0001 -> row 2
- *   AWS-2026-DEMO-0002 -> row 3
- *   AWS-2026-0001      -> row 2 (also handled)
- *
- * Returns null if the ID doesn't end with digits.
+ * Examples:
+ * AWS-2026-DEMO-0001 -> row 2
+ * AWS-2026-DEMO-0002 -> row 3
  */
-export function getApplicationRowNumber(applicationId: string): number | null {
+export function getApplicationRowNumber(
+  applicationId: string
+): number | null {
   const match = applicationId.match(/(\d+)$/);
+
   if (!match) return null;
+
   const num = parseInt(match[1], 10);
+
   if (isNaN(num) || num < 1) return null;
-  return num + 1; // header row is row 1, first application is row 2
+
+  // Row 1 is the header.
+  return num + 1;
 }
 
 /**
- * Fetches a single Application by ID by reading only that row (plus header).
- * Uses getApplicationRowNumber for direct row access. Returns null if the
- * computed row's Application ID does not match the requested one (safety).
+ * Fetch a single application by ID.
  */
 export async function getApplicationById(
   applicationId: string
 ): Promise<Application | null> {
   const rowNumber = getApplicationRowNumber(applicationId);
+
   if (!rowNumber) return null;
 
   const sheets = await getSheetsClient();
+
   const spreadsheetId = process.env.GOOGLE_SPREADSHEET_ID;
   const sheetName = process.env.GOOGLE_SHEET_NAME || 'Sheet1';
+
+  if (!spreadsheetId) {
+    throw new Error('GOOGLE_SPREADSHEET_ID is not configured');
+  }
 
   const response = await sheets.spreadsheets.values.batchGet({
     spreadsheetId,
@@ -59,24 +72,36 @@ export async function getApplicationById(
     ],
   });
 
-  const header = response.data.valueRanges?.[0]?.values?.[0] || [];
-  const row = response.data.valueRanges?.[1]?.values?.[0] || [];
+  const header =
+    response.data.valueRanges?.[0]?.values?.[0] || [];
+
+  const row =
+    response.data.valueRanges?.[1]?.values?.[0] || [];
 
   if (row.length === 0) return null;
 
   const app = parseRow(header, row, rowNumber);
 
-  // Safety: verify the ID in the computed row matches the request.
-  // Prevents returning the wrong candidate if the sheet is reordered.
-  if (app.applicationId !== applicationId) return null;
+  // Safety check.
+  if (app.applicationId !== applicationId) {
+    return null;
+  }
 
   return app;
 }
 
+/**
+ * Fetch all applications.
+ */
 export async function getAllApplications(): Promise<Application[]> {
   const sheets = await getSheetsClient();
+
   const spreadsheetId = process.env.GOOGLE_SPREADSHEET_ID;
   const sheetName = process.env.GOOGLE_SHEET_NAME || 'Sheet1';
+
+  if (!spreadsheetId) {
+    throw new Error('GOOGLE_SPREADSHEET_ID is not configured');
+  }
 
   const response = await sheets.spreadsheets.values.get({
     spreadsheetId,
@@ -84,24 +109,45 @@ export async function getAllApplications(): Promise<Application[]> {
   });
 
   const rows = response.data.values || [];
-  if (rows.length < 2) return [];
+
+  if (rows.length < 2) {
+    return [];
+  }
 
   const [header, ...dataRows] = rows;
-  return dataRows.map((row, index) => parseRow(header, row, index + 2));
+
+  return dataRows.map((row, index) =>
+    parseRow(header, row, index + 2)
+  );
 }
 
-function parseRow(header: string[], row: any[], sheetRowNumber: number): Application {
+/**
+ * Convert a Google Sheets row into an Application object.
+ */
+function parseRow(
+  header: string[],
+  row: unknown[],
+  sheetRowNumber: number
+): Application {
   const get = (columnName: string): string => {
     const colIndex = header.findIndex(
-      (h) => h?.toString().trim().toLowerCase() === columnName.toLowerCase()
+      (h) =>
+        h?.toString().trim().toLowerCase() ===
+        columnName.toLowerCase()
     );
-    return colIndex >= 0 ? (row[colIndex]?.toString() ?? '') : '';
+
+    return colIndex >= 0
+      ? row[colIndex]?.toString() ?? ''
+      : '';
   };
 
   const rawRoleAnswers =
-    get('Role Answers (JSON)') || get('Role Answers') || '{}';
+    get('Role Answers (JSON)') ||
+    get('Role Answers') ||
+    '{}';
 
   let roleAnswers: RoleAnswers = {};
+
   try {
     roleAnswers = JSON.parse(rawRoleAnswers);
   } catch {
@@ -112,8 +158,13 @@ function parseRow(header: string[], row: any[], sheetRowNumber: number): Applica
     applicationId: get('Application ID'),
     timestamp: get('Timestamp'),
     status: (get('Status') || 'Pending') as Application['status'],
+
     fullName: get('Full Name'),
-    registrationNumber: get('Registration No.') || get('Registration Number'),
+
+    registrationNumber:
+      get('Registration No.') ||
+      get('Registration Number'),
+
     universityEmail: get('University Email'),
     personalEmail: get('Personal Email'),
     phone: get('Phone'),
@@ -121,91 +172,144 @@ function parseRow(header: string[], row: any[], sheetRowNumber: number): Applica
     branch: get('Branch'),
     semester: get('Semester'),
     cgpa: get('CGPA'),
+
     linkedin: get('LinkedIn'),
     github: get('GitHub'),
     portfolio: get('Portfolio'),
+
     preferredRole: get('Preferred Role'),
-    resumeUrl: get('Resume URL') || get('Resume'),
+
+    resumeUrl:
+      get('Resume URL') ||
+      get('Resume'),
+
     resumeFileId: get('Resume File ID'),
+
     roleAnswers,
+
     ipAddress: get('IP Address'),
     communities: get('Communities'),
     achievement: get('Achievement'),
     whyJoin: get('Why Join'),
+
     rowIndex: sheetRowNumber,
   };
 }
 
+/**
+ * Update application status.
+ */
 export async function updateApplicationStatus(
   rowIndex: number,
   newStatus: string
 ): Promise<void> {
   const sheets = await getSheetsClient();
+
   const spreadsheetId = process.env.GOOGLE_SPREADSHEET_ID;
   const sheetName = process.env.GOOGLE_SHEET_NAME || 'Sheet1';
 
-  const headerResponse = await sheets.spreadsheets.values.get({
-    spreadsheetId,
-    range: `${sheetName}!1:1`,
-  });
-  const header = headerResponse.data.values?.[0] || [];
+  if (!spreadsheetId) {
+    throw new Error('GOOGLE_SPREADSHEET_ID is not configured');
+  }
+
+  const headerResponse =
+    await sheets.spreadsheets.values.get({
+      spreadsheetId,
+      range: `${sheetName}!1:1`,
+    });
+
+  const header =
+    headerResponse.data.values?.[0] || [];
+
   const statusColIndex = header.findIndex(
-    (h) => h?.toString().trim().toLowerCase() === 'status'
+    (h) =>
+      h?.toString().trim().toLowerCase() === 'status'
   );
 
-  if (statusColIndex < 0) throw new Error('Status column not found');
+  if (statusColIndex < 0) {
+    throw new Error('Status column not found');
+  }
 
-  const columnLetter = columnIndexToLetter(statusColIndex);
-  const range = `${sheetName}!${columnLetter}${rowIndex}`;
+  const columnLetter =
+    columnIndexToLetter(statusColIndex);
+
+  const range =
+    `${sheetName}!${columnLetter}${rowIndex}`;
 
   await sheets.spreadsheets.values.update({
     spreadsheetId,
     range,
     valueInputOption: 'USER_ENTERED',
-    requestBody: { values: [[newStatus]] },
+    requestBody: {
+      values: [[newStatus]],
+    },
   });
 }
 
 /**
- * Fetches all notes for an application by reading only that row
- * and extracting every "Note N" column that has a value.
+ * Fetch all notes for an application.
  */
 export async function getNotesForApplication(
   applicationId: string
 ): Promise<Note[]> {
-  const rowNumber = getApplicationRowNumber(applicationId);
+  const rowNumber =
+    getApplicationRowNumber(applicationId);
+
   if (!rowNumber) return [];
 
   const sheets = await getSheetsClient();
-  const spreadsheetId = process.env.GOOGLE_SPREADSHEET_ID;
-  const sheetName = process.env.GOOGLE_SHEET_NAME || 'Sheet1';
 
-  // Read header + this specific row only
-  const response = await sheets.spreadsheets.values.batchGet({
-    spreadsheetId,
-    ranges: [
-      `${sheetName}!1:1`,
-      `${sheetName}!A${rowNumber}:ZZ${rowNumber}`,
-    ],
-  });
+  const spreadsheetId =
+    process.env.GOOGLE_SPREADSHEET_ID;
 
-  const header = response.data.valueRanges?.[0]?.values?.[0] || [];
-  const row = response.data.valueRanges?.[1]?.values?.[0] || [];
+  const sheetName =
+    process.env.GOOGLE_SHEET_NAME || 'Sheet1';
+
+  if (!spreadsheetId) {
+    throw new Error('GOOGLE_SPREADSHEET_ID is not configured');
+  }
+
+  const response =
+    await sheets.spreadsheets.values.batchGet({
+      spreadsheetId,
+      ranges: [
+        `${sheetName}!1:1`,
+        `${sheetName}!A${rowNumber}:ZZ${rowNumber}`,
+      ],
+    });
+
+  const header =
+    response.data.valueRanges?.[0]?.values?.[0] || [];
+
+  const row =
+    response.data.valueRanges?.[1]?.values?.[0] || [];
 
   const notes: Note[] = [];
 
   header.forEach((h, idx) => {
-    const headerName = h?.toString().trim() ?? '';
-    if (!/^Note \d+$/i.test(headerName)) return;
+    const headerName =
+      h?.toString().trim() ?? '';
 
-    const cellValue = row[idx]?.toString().trim();
+    if (!/^Note \d+$/i.test(headerName)) {
+      return;
+    }
+
+    const cellValue =
+      row[idx]?.toString().trim();
+
     if (!cellValue) return;
 
-    // Format: "<timestamp> | <author> | <note text>"
-    const parts = cellValue.split('|').map((p: any) => p.trim());
+    const parts =
+      cellValue.split('|').map((p) => p.trim());
+
     if (parts.length < 3) return;
 
-    const [timestamp, author, ...noteParts] = parts;
+    const [
+      timestamp,
+      author,
+      ...noteParts
+    ] = parts;
+
     notes.push({
       timestamp,
       applicationId,
@@ -219,49 +323,80 @@ export async function getNotesForApplication(
 }
 
 /**
- * Appends a note to the first empty "Note N" column on the application's row.
+ * Add a note to the first empty Note N column.
  */
 export async function addNote(
   applicationId: string,
   author: string,
   note: string
 ): Promise<Note> {
-  const rowNumber = getApplicationRowNumber(applicationId);
-  if (!rowNumber) throw new Error('Invalid application ID');
+  const rowNumber =
+    getApplicationRowNumber(applicationId);
+
+  if (!rowNumber) {
+    throw new Error('Invalid application ID');
+  }
 
   const sheets = await getSheetsClient();
-  const spreadsheetId = process.env.GOOGLE_SPREADSHEET_ID;
-  const sheetName = process.env.GOOGLE_SHEET_NAME || 'Sheet1';
 
-  const response = await sheets.spreadsheets.values.batchGet({
-    spreadsheetId,
-    ranges: [
-      `${sheetName}!1:1`,
-      `${sheetName}!A${rowNumber}:ZZ${rowNumber}`,
-    ],
-  });
+  const spreadsheetId =
+    process.env.GOOGLE_SPREADSHEET_ID;
 
-  const header = response.data.valueRanges?.[0]?.values?.[0] || [];
-  const row = response.data.valueRanges?.[1]?.values?.[0] || [];
+  const sheetName =
+    process.env.GOOGLE_SHEET_NAME || 'Sheet1';
 
-  // Collect all "Note N" columns, sorted by N
+  if (!spreadsheetId) {
+    throw new Error('GOOGLE_SPREADSHEET_ID is not configured');
+  }
+
+  const response =
+    await sheets.spreadsheets.values.batchGet({
+      spreadsheetId,
+      ranges: [
+        `${sheetName}!1:1`,
+        `${sheetName}!A${rowNumber}:ZZ${rowNumber}`,
+      ],
+    });
+
+  const header =
+    response.data.valueRanges?.[0]?.values?.[0] || [];
+
+  const row =
+    response.data.valueRanges?.[1]?.values?.[0] || [];
+
   const noteColumns = header
-    .map((h, idx) => ({ name: h?.toString().trim() ?? '', idx }))
-    .filter((c) => /^Note \d+$/i.test(c.name))
+    .map((h, idx) => ({
+      name: h?.toString().trim() ?? '',
+      idx,
+    }))
+    .filter((c) =>
+      /^Note \d+$/i.test(c.name)
+    )
     .sort((a, b) => {
-      const na = parseInt(a.name.match(/\d+/)?.[0] ?? '0', 10);
-      const nb = parseInt(b.name.match(/\d+/)?.[0] ?? '0', 10);
+      const na = parseInt(
+        a.name.match(/\d+/)?.[0] ?? '0',
+        10
+      );
+
+      const nb = parseInt(
+        b.name.match(/\d+/)?.[0] ?? '0',
+        10
+      );
+
       return na - nb;
     });
 
   if (noteColumns.length === 0) {
-    throw new Error('No "Note N" columns found in sheet header');
+    throw new Error(
+      'No "Note N" columns found in sheet header'
+    );
   }
 
-  // Find first empty one for this row
   const target = noteColumns.find((col) => {
-    const v = row[col.idx]?.toString().trim();
-    return !v;
+    const value =
+      row[col.idx]?.toString().trim();
+
+    return !value;
   });
 
   if (!target) {
@@ -270,26 +405,56 @@ export async function addNote(
     );
   }
 
-  const timestamp = new Date().toISOString();
-  const value = `${timestamp} | ${author} | ${note}`;
-  const columnLetter = columnIndexToLetter(target.idx);
+  const timestamp =
+    new Date().toISOString();
+
+  const value =
+    `${timestamp} | ${author} | ${note}`;
+
+  const columnLetter =
+    columnIndexToLetter(target.idx);
 
   await sheets.spreadsheets.values.update({
     spreadsheetId,
-    range: `${sheetName}!${columnLetter}${rowNumber}`,
+    range:
+      `${sheetName}!${columnLetter}${rowNumber}`,
     valueInputOption: 'USER_ENTERED',
-    requestBody: { values: [[value]] },
+    requestBody: {
+      values: [[value]],
+    },
   });
 
-  return { timestamp, applicationId, author, note, rowIndex: rowNumber };
+  return {
+    timestamp,
+    applicationId,
+    author,
+    note,
+    rowIndex: rowNumber,
+  };
 }
 
-function columnIndexToLetter(index: number): string {
+/**
+ * Convert zero-based column index to Google Sheets column letter.
+ *
+ * 0 -> A
+ * 1 -> B
+ * 25 -> Z
+ * 26 -> AA
+ */
+function columnIndexToLetter(
+  index: number
+): string {
   let letter = '';
   let i = index;
+
   while (i >= 0) {
-    letter = String.fromCharCode((i % 26) + 65) + letter;
+    letter =
+      String.fromCharCode(
+        (i % 26) + 65
+      ) + letter;
+
     i = Math.floor(i / 26) - 1;
   }
+
   return letter;
 }

@@ -9,7 +9,7 @@ const VALID_STATUSES = [
   'Rejected',
 ];
 
-export async function PATCH(
+export async function POST(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {

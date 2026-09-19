@@ -4,41 +4,77 @@ import { getAllApplications } from '@/lib/google-sheets';
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
-    const search = searchParams.get('search')?.toLowerCase() || '';
-    const status = searchParams.get('status') || '';
-    const sort = searchParams.get('sort') || 'timestamp_desc';
+
+    const search =
+      searchParams.get('search')?.trim().toLowerCase() || '';
+    const status = searchParams.get('status')?.trim() || '';
+    const sort =
+      searchParams.get('sort') || 'timestamp_desc';
 
     let applications = await getAllApplications();
 
-    // Backend Filtering
+    // Filter by search term
     if (search) {
-      applications = applications.filter(app => 
-        app.fullName.toLowerCase().includes(search) || 
-        app.registrationNumber.toLowerCase().includes(search) ||
-        app.universityEmail.toLowerCase().includes(search)
+      applications = applications.filter((application) =>
+        [
+          application.applicationId,
+          application.fullName,
+          application.registrationNumber,
+          application.universityEmail,
+          application.personalEmail,
+          application.phone,
+          application.program,
+          application.branch,
+          application.status,
+        ]
+          .filter(Boolean)
+          .some((value) =>
+            value.toLowerCase().includes(search)
+          )
       );
     }
+
+    // Filter by status
     if (status) {
-      applications = applications.filter(app => app.status === status);
+      applications = applications.filter(
+        (application) => application.status === status
+      );
     }
 
-    // Backend Sorting
+    // Sort by timestamp
     if (sort === 'timestamp_desc') {
-      applications.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+      applications.sort(
+        (a, b) =>
+          new Date(b.timestamp).getTime() -
+          new Date(a.timestamp).getTime()
+      );
     } else if (sort === 'timestamp_asc') {
-      applications.sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
+      applications.sort(
+        (a, b) =>
+          new Date(a.timestamp).getTime() -
+          new Date(b.timestamp).getTime()
+      );
     }
 
-    return NextResponse.json({ success: true, data: applications });
+    return NextResponse.json({
+      success: true,
+      applications,
+      count: applications.length,
+    });
   } catch (error) {
-    console.error('[GET /api/applications] Error:', error);
+    console.error(
+      'GET /api/applications error:',
+      error
+    );
+
     return NextResponse.json(
       {
         success: false,
         error: 'Failed to fetch applications',
-        details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      {
+        status: 500,
+      }
     );
   }
 }
