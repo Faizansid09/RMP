@@ -300,7 +300,7 @@ export async function getNotesForApplication(
     if (!cellValue) return;
 
     const parts =
-      cellValue.split('|').map((p) => p.trim());
+      cellValue.split('|').map((p: string) => p.trim());
 
     if (parts.length < 3) return;
 
