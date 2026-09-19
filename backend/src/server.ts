@@ -19,6 +19,4 @@ app.get('/', (req, res) => {
 // Routes
 app.use('/api/applications', applicationRoutes);
 
-app.listen(PORT, () => {
-  console.log(`Backend server is running on http://localhost:${PORT}`);
-});
+export default app;
