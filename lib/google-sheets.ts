@@ -120,6 +120,79 @@ export async function getAllApplications(): Promise<Application[]> {
     parseRow(header, row, index + 2)
   );
 }
+/**
+ * Fetch a single page of applications directly from Google Sheets.
+ *
+ * This avoids loading the entire A:Z dataset into memory.
+ */
+export async function getApplicationsPage(
+  page: number = 1,
+  limit: number = 20
+): Promise<{
+  applications: Application[];
+  page: number;
+  limit: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+}> {
+  const sheets = await getSheetsClient();
+
+  const spreadsheetId = process.env.GOOGLE_SPREADSHEET_ID;
+  const sheetName = process.env.GOOGLE_SHEET_NAME || 'Sheet1';
+
+  if (!spreadsheetId) {
+    throw new Error('GOOGLE_SPREADSHEET_ID is not configured');
+  }
+
+  // Safety limits.
+  const safePage = Math.max(1, Math.floor(page));
+  const safeLimit = Math.min(
+    100,
+    Math.max(1, Math.floor(limit))
+  );
+
+  // Row 1 contains headers.
+  // Page 1 starts at row 2.
+  const startRow =
+    2 + (safePage - 1) * safeLimit;
+
+  const endRow =
+    startRow + safeLimit - 1;
+
+  // Fetch the header and only the rows required for this page.
+  const response =
+    await sheets.spreadsheets.values.batchGet({
+      spreadsheetId,
+      ranges: [
+        `${sheetName}!1:1`,
+        `${sheetName}!A${startRow}:Z${endRow}`,
+      ],
+    });
+
+  const header =
+    response.data.valueRanges?.[0]?.values?.[0] || [];
+
+  const rows =
+    response.data.valueRanges?.[1]?.values || [];
+
+  const applications = rows
+    .filter((row) => row.length > 0)
+    .map((row, index) =>
+      parseRow(
+        header,
+        row,
+        startRow + index
+      )
+    );
+
+  return {
+    applications,
+    page: safePage,
+    limit: safeLimit,
+    hasNextPage: rows.length === safeLimit,
+    hasPreviousPage: safePage > 1,
+  };
+}
 
 /**
  * Convert a Google Sheets row into an Application object.
