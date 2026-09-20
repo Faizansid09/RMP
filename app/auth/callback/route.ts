@@ -124,12 +124,8 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  const user = await userResponse.json();
-
-  console.log("AWS LPU USER:", user);
-
   const response = NextResponse.redirect(
-    new URL("/", request.url)
+    new URL("/auth/success", request.url)
   );
 
   response.cookies.set(
@@ -151,4 +147,5 @@ export async function GET(request: NextRequest) {
   response.cookies.delete("aws_lpu_code_verifier");
 
   return response;
+
 }
