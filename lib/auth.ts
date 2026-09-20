@@ -5,10 +5,10 @@ const SSO_USERINFO_URL =
 
 export type AuthUser = {
   sub: string;
-  name?: string;
-  email?: string;
+  name: string;
+  email: string;
   picture?: string;
-  role?: string;
+  role: string;
 };
 
 export async function getCurrentUser(): Promise<AuthUser | null> {
@@ -36,7 +36,27 @@ export async function getCurrentUser(): Promise<AuthUser | null> {
       return null;
     }
 
-    return await response.json();
+    const data = await response.json();
+
+    if (
+      typeof data.sub !== "string" ||
+      typeof data.name !== "string" ||
+      typeof data.email !== "string" ||
+      typeof data.role !== "string"
+    ) {
+      return null;
+    }
+
+    return {
+      sub: data.sub,
+      name: data.name,
+      email: data.email,
+      picture:
+        typeof data.picture === "string"
+          ? data.picture
+          : undefined,
+      role: data.role,
+    };
   } catch {
     return null;
   }

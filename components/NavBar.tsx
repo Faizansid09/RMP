@@ -1,18 +1,20 @@
 import Image from "next/image";
 import Link from "next/link";
 import { getCurrentUser } from "@/lib/auth";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 export default async function Navbar() {
   const user = await getCurrentUser();
 
   return (
-    <nav className="relative z-10 flex h-16 items-center justify-between border-b border-[#dedede]">
+    <nav className="relative z-10 flex h-16 items-center justify-between border-b border-border px-6 transition-colors duration-300 lg:px-8">
+      {/* Logo */}
       <Link href="/" className="flex items-center gap-3">
-        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-black">
+        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-foreground transition-colors duration-300">
           <svg
             viewBox="0 0 24 24"
             fill="none"
-            className="h-4 w-4 text-white"
+            className="h-4 w-4 text-background"
           >
             <path
               d="M5 12h12"
@@ -31,64 +33,70 @@ export default async function Navbar() {
         </div>
 
         <div className="leading-none">
-          <div className="text-[11px] font-medium text-[#777]">
+          <div className="text-[11px] font-medium text-text-muted">
             AWS LPU
           </div>
 
-          <div className="text-[15px] font-semibold tracking-[-0.03em] text-[#111]">
+          <div className="text-[15px] font-semibold tracking-[-0.03em] text-foreground">
             Recruitment
           </div>
         </div>
       </Link>
 
-      <div className="hidden items-center gap-6 text-[10px] uppercase tracking-widest text-[#999] sm:flex">
+      {/* Center information */}
+      <div className="hidden items-center gap-6 text-[10px] uppercase tracking-widest text-text-faint sm:flex">
         <span>Recruitment Management</span>
 
-        <span className="h-1 w-1 rounded-full bg-[#bbb]" />
+        <span className="h-1 w-1 rounded-full bg-text-faint" />
 
         <span>Secure Access</span>
       </div>
 
-      {user ? (
-        <div className="flex items-center gap-3">
-          <Link
-            href="/dashboard"
-            className="border border-[#cfcfcf] bg-white px-4 py-2 text-[12px] font-medium text-[#333] transition hover:border-[#999] hover:bg-[#fafafa]"
-          >
-            Dashboard
-          </Link>
+      {/* Right side */}
+      <div className="flex items-center gap-3">
+        <ThemeToggle />
 
-          <a
-            href="/api/auth/logout"
-            className="border border-[#cfcfcf] bg-white px-4 py-2 text-[12px] font-medium text-[#666] transition hover:border-[#999] hover:bg-[#fafafa]"
-          >
-            Logout
-          </a>
+        {user ? (
+          <div className="flex items-center gap-3">
+            <Link
+              href="/dashboard"
+              className="border border-border bg-surface px-4 py-2 text-[12px] font-medium text-text-secondary transition-colors duration-200 hover:border-border-strong hover:bg-surface-muted"
+            >
+              Dashboard
+            </Link>
 
-          <div className="relative h-8 w-8 overflow-hidden rounded-full border border-[#ddd] bg-[#eee]">
-            {user.picture ? (
-              <Image
-                src={user.picture}
-                alt={user.name ?? "User"}
-                fill
-                sizes="32px"
-                className="object-cover"
-              />
-            ) : (
-              <div className="flex h-full w-full items-center justify-center text-[11px] font-medium text-[#666]">
-                {user.name?.charAt(0).toUpperCase() ?? "U"}
-              </div>
-            )}
+            <a
+              href="/api/auth/logout"
+              className="border border-border bg-surface px-4 py-2 text-[12px] font-medium text-text-secondary transition-colors duration-200 hover:border-border-strong hover:bg-surface-muted"
+            >
+              Logout
+            </a>
+
+            <div className="relative h-8 w-8 overflow-hidden rounded-full border border-border bg-surface-muted">
+              {user.picture ? (
+                <Image
+                  src={user.picture}
+                  alt={user.name ?? "User"}
+                  fill
+                  sizes="32px"
+                  className="object-cover"
+                />
+              ) : (
+                <div className="flex h-full w-full items-center justify-center text-[11px] font-medium text-text-secondary">
+                  {user.name?.charAt(0).toUpperCase() ?? "U"}
+                </div>
+              )}
+            </div>
           </div>
-        </div>
-      ) : (
-        <Link
-          href="/auth/login"
-          className="border border-[#cfcfcf] bg-white px-4 py-2 text-[13px] font-medium text-[#333] transition hover:border-[#999] hover:bg-[#fafafa]"
-        >
-          Sign in
-        </Link>
-      )}
+        ) : (
+          <Link
+            href="/auth/login"
+            className="border border-border bg-surface px-4 py-2 text-[13px] font-medium text-text-secondary transition-colors duration-200 hover:border-border-strong hover:bg-surface-muted"
+          >
+            Sign in
+          </Link>
+        )}
+      </div>
     </nav>
   );
 }

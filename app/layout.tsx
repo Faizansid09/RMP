@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+
 import Navbar from "@/components/NavBar";
 import Footer from "@/components/Footer";
-import "./globals.css";
 import { ThemeProvider } from "@/components/ThemeProvider";
+
+import "./globals.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -16,36 +18,39 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(
-    "https://recruitment.awslpu.in"
-  ),
+  metadataBase: new URL("https://recruitment.awslpu.in"),
+
   title: {
     default: "AWS LPU Recruitment",
     template: "%s | AWS LPU Recruitment",
   },
+
   description:
     "AWS LPU Recruitment Management Portal for managing applications, applicants, recruitment processes, and offers.",
+
   applicationName: "AWS LPU Recruitment",
+
   keywords: [
     "AWS LPU",
     "AWS LPU Recruitment",
     "Recruitment Management",
     "LPU Recruitment",
   ],
+
   openGraph: {
     type: "website",
     url: "https://recruitment.awslpu.in",
     siteName: "AWS LPU Recruitment",
     title: "AWS LPU Recruitment",
-    description:
-      "AWS LPU Recruitment Management Portal.",
+    description: "AWS LPU Recruitment Management Portal.",
   },
+
   twitter: {
     card: "summary",
     title: "AWS LPU Recruitment",
-    description:
-      "AWS LPU Recruitment Management Portal.",
+    description: "AWS LPU Recruitment Management Portal.",
   },
+
   robots: {
     index: false,
     follow: false,
@@ -54,22 +59,29 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode;
-}) {
+}>) {
   return (
-    <html lang="en" suppressHydrationWarning className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
-      <body className="flex min-h-full flex-col font-sans transition-colors duration-300">
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={`${geistSans.variable} ${geistMono.variable}`}
+    >
+      <body className="min-h-screen bg-background font-sans text-foreground antialiased">
         <ThemeProvider
           attribute="class"
           defaultTheme="light"
           enableSystem={false}
+          disableTransitionOnChange={false}
         >
-          <div className="flex min-h-screen w-full flex-col">
+          <div className="flex min-h-screen flex-col bg-background text-foreground">
             <Navbar />
+
             <main className="flex flex-1 flex-col">
               {children}
             </main>
+
             <Footer />
           </div>
         </ThemeProvider>

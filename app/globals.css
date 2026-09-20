@@ -1,28 +1,590 @@
 @import "tailwindcss";
 
-/* Tell Tailwind v4 to activate dark: classes when .dark is on <html> */
+/* =========================================================
+   TAILWIND V4 DARK MODE
+   ========================================================= */
+
 @variant dark (&:where(.dark, .dark *));
 
+/* =========================================================
+   THEME TOKENS
+   ========================================================= */
+
 :root {
-  --background: #f8fafc;
-  --foreground: #0f172a;
+  --background: #f5f5f5;
+  --foreground: #111111;
+
+  --surface: #ffffff;
+  --surface-muted: #f5f5f5;
+
+  --border: #dedede;
+  --border-strong: #d9d9d9;
+
+  --text-primary: #111111;
+  --text-secondary: #666666;
+  --text-muted: #777777;
+  --text-subtle: #888888;
+  --text-faint: #999999;
+
+  --accent: #f48120;
 }
 
 .dark {
   --background: #020617;
-  --foreground: #ffffff;
+  --foreground: #f8fafc;
+
+  --surface: #0f172a;
+  --surface-muted: #020617;
+
+  --border: #1e293b;
+  --border-strong: #334155;
+
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+  --text-subtle: #64748b;
+  --text-faint: #64748b;
+
+  --accent: #f48120;
 }
+
+/* =========================================================
+   TAILWIND THEME
+   ========================================================= */
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+  --color-text-subtle: var(--text-subtle);
+  --color-text-faint: var(--text-faint);
+
+  --color-accent: var(--accent);
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
+/* =========================================================
+   RESET / BASE
+   ========================================================= */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  min-height: 100%;
+  background: var(--background);
+  color: var(--foreground);
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+}
+
 body {
+  min-width: 320px;
+  min-height: 100%;
+  margin: 0;
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
-  transition: background-color 0.25s ease, color 0.25s ease;
+
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease;
+}
+
+/* Prevent long text / links from creating horizontal overflow */
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+a,
+span {
+  overflow-wrap: break-word;
+}
+
+/* Images should never escape mobile containers */
+img,
+svg,
+video,
+canvas {
+  max-width: 100%;
+}
+
+/* =========================================================
+   THEME TRANSITIONS
+   ========================================================= */
+
+body,
+nav,
+main,
+section,
+footer,
+header,
+button,
+a,
+div {
+  transition:
+    background-color 0.25s ease,
+    border-color 0.25s ease,
+    color 0.25s ease;
+}
+
+/* =========================================================
+   DARK MODE COMPATIBILITY
+   ---------------------------------------------------------
+   Your existing homepage still contains hardcoded colors.
+   These rules keep those sections working until the JSX is
+   migrated completely to semantic theme classes.
+   ========================================================= */
+
+/* Backgrounds */
+
+.dark .bg-\[\#f5f5f5\] {
+  background-color: var(--surface-muted) !important;
+}
+
+.dark .bg-white {
+  background-color: var(--surface) !important;
+}
+
+.dark .bg-\[\#111\] {
+  background-color: #020617 !important;
+}
+
+/* Text */
+
+.dark .text-\[\#111\] {
+  color: var(--text-primary) !important;
+}
+
+.dark .text-\[\#333\] {
+  color: #e2e8f0 !important;
+}
+
+.dark .text-\[\#555\] {
+  color: #cbd5e1 !important;
+}
+
+.dark .text-\[\#666\] {
+  color: var(--text-secondary) !important;
+}
+
+.dark .text-\[\#777\] {
+  color: var(--text-muted) !important;
+}
+
+.dark .text-\[\#888\] {
+  color: var(--text-subtle) !important;
+}
+
+.dark .text-\[\#999\] {
+  color: var(--text-faint) !important;
+}
+
+.dark .text-\[\#aaa\] {
+  color: #64748b !important;
+}
+
+.dark .text-\[\#bbb\] {
+  color: #475569 !important;
+}
+
+.dark .text-\[\#ccc\] {
+  color: #cbd5e1 !important;
+}
+
+.dark .text-white {
+  color: #f8fafc !important;
+}
+
+/* Borders */
+
+.dark .border-\[\#dedede\] {
+  border-color: var(--border) !important;
+}
+
+.dark .border-\[\#d9d9d9\] {
+  border-color: var(--border-strong) !important;
+}
+
+.dark .border-\[\#cfcfcf\] {
+  border-color: #334155 !important;
+}
+
+.dark .border-\[\#ddd\] {
+  border-color: #334155 !important;
+}
+
+.dark .border-\[\#333\] {
+  border-color: #1e293b !important;
+}
+
+.dark .border-\[\#555\] {
+  border-color: #475569 !important;
+}
+
+/* Misc */
+
+.dark .bg-\[\#eee\] {
+  background-color: #1e293b !important;
+}
+
+.dark .bg-\[\#bbb\] {
+  background-color: #475569 !important;
+}
+
+.dark .bg-\[\#d2d2d2\] {
+  background-color: #475569 !important;
+}
+
+.dark .bg-\[\#f48120\] {
+  background-color: var(--accent) !important;
+}
+
+/* Dark buttons */
+
+.dark .hover\:bg-\[\#fafafa\]:hover {
+  background-color: #1e293b !important;
+}
+
+.dark .hover\:bg-\[\#2a2a2a\]:hover,
+.dark .hover\:bg-\[\#2b2b2b\]:hover {
+  background-color: #1e293b !important;
+}
+
+/* =========================================================
+   GRID / DECORATIVE BACKGROUNDS
+   ========================================================= */
+
+.dark [style*="linear-gradient(#e8e8e8"] {
+  opacity: 0.25;
+}
+
+.dark [style*="linear-gradient(#555"] {
+  opacity: 0.3;
+}
+
+/* =========================================================
+   MOBILE / TABLET RESPONSIVENESS
+   ========================================================= */
+
+/*
+   The homepage already uses Tailwind responsive utilities,
+   but some arbitrary values are very desktop-oriented.
+   These overrides make those existing values behave better
+   on smaller screens.
+*/
+
+/* ---------------------------------------------------------
+   Small phones: 320px - 479px
+   --------------------------------------------------------- */
+
+@media (max-width: 479px) {
+  /* General horizontal padding */
+  .px-8 {
+    padding-left: 1.25rem !important;
+    padding-right: 1.25rem !important;
+  }
+
+  .lg\:px-16 {
+    padding-left: 1.25rem !important;
+    padding-right: 1.25rem !important;
+  }
+
+  /* Hero */
+  .min-h-\[calc\(100vh-120px\)\] {
+    min-height: calc(100svh - 64px);
+  }
+
+  /* Huge hero typography */
+  .text-\[54px\] {
+    font-size: 2.75rem !important;
+    line-height: 0.98 !important;
+  }
+
+  .sm\:text-\[76px\] {
+    font-size: 2.75rem !important;
+  }
+
+  .lg\:text-\[96px\] {
+    font-size: 2.75rem !important;
+  }
+
+  /* Section headings */
+  .text-\[38px\] {
+    font-size: 2rem !important;
+    line-height: 1.05 !important;
+  }
+
+  .text-\[40px\] {
+    font-size: 2.1rem !important;
+    line-height: 1.05 !important;
+  }
+
+  .text-\[48px\] {
+    font-size: 2.5rem !important;
+    line-height: 1 !important;
+  }
+
+  .sm\:text-\[64px\] {
+    font-size: 2.5rem !important;
+  }
+
+  /* Hero paragraph */
+  .text-\[17px\] {
+    font-size: 0.95rem !important;
+    line-height: 1.8 !important;
+  }
+
+  /* Section vertical spacing */
+  .py-24 {
+    padding-top: 4rem !important;
+    padding-bottom: 4rem !important;
+  }
+
+  .py-28 {
+    padding-top: 5rem !important;
+    padding-bottom: 5rem !important;
+  }
+
+  /* Large hero gaps */
+  .mt-24 {
+    margin-top: 4rem !important;
+  }
+
+  .mt-20 {
+    margin-top: 3.5rem !important;
+  }
+
+  .mt-16 {
+    margin-top: 3rem !important;
+  }
+
+  /* Hero decorative grid */
+  [style*="backgroundSize: \"64px 64px\""] {
+    background-size: 40px 40px !important;
+  }
+
+  /* Orange glow */
+  .h-125,
+  .w-125 {
+    height: 20rem !important;
+    width: 20rem !important;
+  }
+}
+
+/* ---------------------------------------------------------
+   Phones: <= 639px
+   --------------------------------------------------------- */
+
+@media (max-width: 639px) {
+  /* Navbar */
+  nav {
+    height: 4rem !important;
+    padding-left: 1.25rem !important;
+    padding-right: 1.25rem !important;
+  }
+
+  /* Hide the desktop center navigation text */
+  nav > div:nth-child(2) {
+    display: none !important;
+  }
+
+  /* Navbar right side stays compact */
+  nav .gap-3 {
+    gap: 0.5rem;
+  }
+
+  /* Prevent navbar actions from becoming huge */
+  nav a {
+    white-space: nowrap;
+  }
+
+  /* Dashboard / Logout buttons */
+  nav a.px-4 {
+    padding-left: 0.75rem !important;
+    padding-right: 0.75rem !important;
+  }
+
+  /* Hide Dashboard + Logout text on extremely small screens
+     while keeping Sign In available */
+  @media (max-width: 400px) {
+    nav a[href="/dashboard"],
+    nav a[href="/api/auth/logout"] {
+      display: none !important;
+    }
+  }
+
+  /* Hero */
+  .max-w-375 {
+    max-width: 100% !important;
+  }
+
+  /* CTA */
+  .mt-10.flex {
+    align-items: flex-start;
+  }
+
+  /* CTA button can use full width */
+  .mt-10.flex a {
+    min-height: 3rem;
+  }
+
+  /* Stats / information strip */
+  .sm\:grid-cols-3 {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Benefits */
+  .sm\:grid-cols-2 {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Recruitment steps */
+  .lg\:grid-cols-3 {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Builder tracks */
+  .grid.sm\:grid-cols-2 {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Remove desktop-style borders where stacked */
+  .sm\:border-r {
+    border-right-width: 0 !important;
+  }
+
+  .sm\:border-b-0 {
+    border-bottom-width: 1px !important;
+  }
+
+  /* Cards */
+  .min-h-\[220px\] {
+    min-height: 180px !important;
+  }
+
+  .min-h-\[125px\] {
+    min-height: 105px !important;
+  }
+
+  /* Don't push card headings too far down on mobile */
+  .mt-16 {
+    margin-top: 2.5rem !important;
+  }
+
+  /* Footer CTA */
+  .max-w-\[850px\] {
+    max-width: 100% !important;
+  }
+
+  /* Text blocks */
+  .max-w-\[540px\] {
+    max-width: 100% !important;
+  }
+
+  .max-w-\[520px\] {
+    max-width: 100% !important;
+  }
+
+  .max-w-\[650px\] {
+    max-width: 100% !important;
+  }
+
+  .max-w-\[560px\] {
+    max-width: 100% !important;
+  }
+
+  .max-w-\[720px\] {
+    max-width: 100% !important;
+  }
+}
+
+/* ---------------------------------------------------------
+   Tablet: 640px - 1023px
+   --------------------------------------------------------- */
+
+@media (min-width: 640px) and (max-width: 1023px) {
+  /* Slightly smaller hero */
+  .sm\:text-\[76px\] {
+    font-size: 4.75rem !important;
+  }
+
+  /* Section headings */
+  .text-\[38px\] {
+    font-size: 2.25rem !important;
+  }
+
+  /* Reduce horizontal padding */
+  .lg\:px-16 {
+    padding-left: 2rem !important;
+    padding-right: 2rem !important;
+  }
+
+  /* Reduce vertical spacing */
+  .py-24 {
+    padding-top: 5rem !important;
+    padding-bottom: 5rem !important;
+  }
+
+  .py-28 {
+    padding-top: 6rem !important;
+    padding-bottom: 6rem !important;
+  }
+
+  /* Two-column grids */
+  .lg\:grid-cols-\[0\.7fr_1\.3fr\],
+  .lg\:grid-cols-\[0\.8fr_1\.2fr\],
+  .lg\:grid-cols-\[1fr_1fr\] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Recruitment cards */
+  .lg\:grid-cols-3 {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+/* =========================================================
+   ACCESSIBILITY
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+/* =========================================================
+   SAFE AREA SUPPORT
+   ========================================================= */
+
+@supports (padding: env(safe-area-inset-bottom)) {
+  body {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
 }
